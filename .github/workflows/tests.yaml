@@ -5,7 +5,7 @@ on:
     paths-ignore: ['*.md', 'CODEOWNERS', 'LICENSE']
     branches:
     - 'master'
-    - 'release/version*'
+    - 'release/*'
   pull_request:
     paths-ignore: ['*.md', 'CODEOWNERS', 'LICENSE']
 
