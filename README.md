@@ -60,8 +60,8 @@ the monitor's raw stats response to external clients
 
 ### Getting Started
 
-1. First, refer to [services/README](../README.md#getting-started) for launching the
-   config, authorization, and audit services.
+1. First, refer to [services/README][getting-started] for launching the config,
+   authorization, and audit services.
 
    * The authorization service should be launched with the `mock` profile to leverage
      test PKI materials and associated user configuration (see
@@ -72,8 +72,7 @@ the monitor's raw stats response to external clients
    Accumulo instance containing some test data...
     
    ```
-   cd datawave/services
-   java -jar accumulo-service/target/accumulo-service*-exec.jar --spring.profiles.active=dev,remoteauth,mock
+   java -jar service/target/accumulo-service*-exec.jar --spring.profiles.active=dev,remoteauth,mock
    ```
 
 3. Ensure that the [testUser.p12][testUser] (password: *ChangeIt*) cert is imported into
@@ -93,10 +92,11 @@ the monitor's raw stats response to external clients
 
    See [sample_configuration/accumulo-dev.yml][accumulo-dev-yml] and configure as desired
 
-[UpdateRequest]:../accumulo-api/src/main/java/datawave/webservice/request/UpdateRequest.java
-[AdminController]:src/main/java/datawave/microservice/accumulo/admin/AdminController.java
-[LookupController]:src/main/java/datawave/microservice/accumulo/lookup/LookupController.java
-[StatsController]:src/main/java/datawave/microservice/accumulo/stats/StatsController.java
-[testUser]:../spring-boot-starter-datawave/src/main/resources/testUser.p12
-[accumulo-dev-yml]:../sample_configuration/accumulo-dev.yml.example
-[auth-mock-yml]:../sample_configuration/authorization-mock.yml
+[getting-started]:https://github.com/NationalSecurityAgency/datawave-microservices-root/blob/master/README.md#getting-started
+[UpdateRequest]:api/src/main/java/datawave/webservice/request/UpdateRequest.java
+[AdminController]:service/src/main/java/datawave/microservice/accumulo/admin/AdminController.java
+[LookupController]:service/src/main/java/datawave/microservice/accumulo/lookup/LookupController.java
+[StatsController]:service/src/main/java/datawave/microservice/accumulo/stats/StatsController.java
+[testUser]:https://github.com/NationalSecurityAgency/datawave-spring-boot-starter/blob/master/src/main/resources/testUser.p12
+[accumulo-dev-yml]:https://github.com/NationalSecurityAgency/datawave-microservices-root/blob/master/sample_configuration/accumulo-dev.yml.example
+[auth-mock-yml]:https://github.com/NationalSecurityAgency/datawave-microservices-root/blob/master/sample_configuration/authorization-mock.yml
