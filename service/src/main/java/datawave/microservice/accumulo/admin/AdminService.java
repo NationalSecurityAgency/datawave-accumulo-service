@@ -57,6 +57,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * This service provides utility methods for common Accumulo operations and administrative functions
  */
@@ -278,7 +280,7 @@ public class AdminService {
             Authorizations authorizations = ops.getUserAuthorizations(userName);
             List<String> authorizationsList = new ArrayList<>();
             for (byte[] b : authorizations.getAuthorizations()) {
-                authorizationsList.add(new String(b));
+                authorizationsList.add(new String(b, UTF_8));
             }
             response.setUserAuthorizations(authorizationsList);
         } catch (Exception e) {

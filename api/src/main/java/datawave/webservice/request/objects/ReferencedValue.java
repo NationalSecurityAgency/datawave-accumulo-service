@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlValue;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class ReferencedValue {
@@ -82,7 +84,7 @@ public class ReferencedValue {
         if (isValidXML(value)) {
             this.value = value;
         } else {
-            this.value = new String(Base64.encodeBase64(value.getBytes(Charset.forName("UTF-8"))));
+            this.value = new String(Base64.encodeBase64(value.getBytes(UTF_8)), UTF_8);
             this.base64Encoded = true;
         }
     }
