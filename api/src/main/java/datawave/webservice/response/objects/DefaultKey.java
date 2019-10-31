@@ -7,9 +7,10 @@ import org.apache.commons.codec.binary.Base64;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class DefaultKey extends KeyBase {
@@ -43,8 +44,8 @@ public class DefaultKey extends KeyBase {
     
     @Override
     public String getRow() {
-        if (this.row.getType().equals(TypedValue.XSD_STRING) && this.row.isBase64Encoded() == true) {
-            return new String(Base64.decodeBase64(this.row.getValue().toString().getBytes(Charset.forName("UTF-8"))));
+        if (this.row.getType().equals(TypedValue.XSD_STRING) && this.row.isBase64Encoded()) {
+            return new String(Base64.decodeBase64(this.row.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.row.getValue().toString();
         }
@@ -52,8 +53,8 @@ public class DefaultKey extends KeyBase {
     
     @Override
     public String getColFam() {
-        if (this.colFam.getType().equals(TypedValue.XSD_STRING) && this.colFam.isBase64Encoded() == true) {
-            return new String(Base64.decodeBase64(this.colFam.getValue().toString().getBytes(Charset.forName("UTF-8"))));
+        if (this.colFam.getType().equals(TypedValue.XSD_STRING) && this.colFam.isBase64Encoded()) {
+            return new String(Base64.decodeBase64(this.colFam.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.colFam.getValue().toString();
         }
@@ -61,16 +62,16 @@ public class DefaultKey extends KeyBase {
     
     @Override
     public String getColQual() {
-        if (this.colQual.getType().equals(TypedValue.XSD_STRING) && this.colQual.isBase64Encoded() == true) {
-            return new String(Base64.decodeBase64(this.colQual.getValue().toString().getBytes(Charset.forName("UTF-8"))));
+        if (this.colQual.getType().equals(TypedValue.XSD_STRING) && this.colQual.isBase64Encoded()) {
+            return new String(Base64.decodeBase64(this.colQual.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.colQual.getValue().toString();
         }
     }
     
     public String getColumnVisibility() {
-        if (this.columnVisibility.getType().equals(TypedValue.XSD_STRING) && this.columnVisibility.isBase64Encoded() == true) {
-            return new String(Base64.decodeBase64(this.columnVisibility.getValue().toString().getBytes(Charset.forName("UTF-8"))));
+        if (this.columnVisibility.getType().equals(TypedValue.XSD_STRING) && this.columnVisibility.isBase64Encoded()) {
+            return new String(Base64.decodeBase64(this.columnVisibility.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.columnVisibility.getValue().toString();
         }
@@ -87,17 +88,13 @@ public class DefaultKey extends KeyBase {
     
     @Override
     public void setMarkings(Map<String,String> markings) {
-        HashMap<String,String> markingMap = new HashMap<String,String>();
+        HashMap<String,String> markingMap = new HashMap<>();
         if (markings != null) {
             markingMap.putAll(markings);
         }
         this.markings = markingMap;
         
-        if (null == this.markings || !markings.containsKey(MarkingFunctions.Default.COLUMN_VISIBILITY)) {
-            setColumnVisibility("");
-        } else {
-            setColumnVisibility(markings.get(MarkingFunctions.Default.COLUMN_VISIBILITY));
-        }
+        setColumnVisibility(markingMap.getOrDefault(MarkingFunctions.Default.COLUMN_VISIBILITY, ""));
     }
     
     @Override
@@ -120,7 +117,7 @@ public class DefaultKey extends KeyBase {
     public void setColumnVisibility(String colVis) {
         this.columnVisibility = (colVis == null) ? new TypedValue("") : new TypedValue(colVis);
         if (markings == null) {
-            markings = new HashMap<String,String>();
+            markings = new HashMap<>();
         }
         markings.put(MarkingFunctions.Default.COLUMN_VISIBILITY, this.columnVisibility.getValue().toString());
         

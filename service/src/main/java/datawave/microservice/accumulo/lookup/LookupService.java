@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Provides Accumulo scan results in the form of {@link LookupResponse} for the given inputs (table, row, cf, cq, etc). Optionally supports auditing of lookup
  * requests via autowired {@link AuditClient}
@@ -61,7 +63,7 @@ public class LookupService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     private enum Encoding {
-        none, base64;
+        none, base64
     }
     
     public interface Parameter {
@@ -171,8 +173,8 @@ public class LookupService {
             
             final List<Range> ranges = new ArrayList<>();
             
-            Key begin = null;
-            Key end = null;
+            Key begin;
+            Key end;
             if (request.colFam == null && request.colQual == null) {
                 begin = new Key(new Text(request.row));
                 end = begin.followingKey(PartialKey.ROW);
@@ -321,7 +323,7 @@ public class LookupService {
         
         if (request.auths != null) {
             try {
-                new Authorizations(request.auths.getBytes());
+                new Authorizations(request.auths.getBytes(UTF_8));
             } catch (IllegalArgumentException e) {
                 response.addException(new IllegalArgumentException(String.format("Invalid argument %s for \"%s\"", request.auths, Parameter.USE_AUTHS)));
             }
@@ -336,7 +338,7 @@ public class LookupService {
     }
     
     private void logResponseErrors(List<?> exceptionList) {
-        exceptionList.stream().forEach(ex -> log.error(ex.toString()));
+        exceptionList.forEach(ex -> log.error(ex.toString()));
     }
     
     /**
@@ -390,7 +392,7 @@ public class LookupService {
             @Override
             public AuditClient.Request build() {
                 // create base query
-                final StringBuffer sb = new StringBuffer();
+                final StringBuilder sb = new StringBuilder();
                 sb.append("lookup/").append(this.table).append("/").append(this.row);
                 if (this.colFam != null) {
                     sb.append("/").append(this.colFam);
@@ -422,7 +424,7 @@ public class LookupService {
     }
     
     static String base64Decode(String value) {
-        return null == value ? null : new String(Base64.decodeBase64(value.getBytes()));
+        return null == value ? null : new String(Base64.decodeBase64(value.getBytes(UTF_8)), UTF_8);
     }
     
     public static class LookupRequest {
@@ -454,10 +456,10 @@ public class LookupService {
             this.params = b.params;
             
             if (StringUtils.isNotBlank(b.beginEntry)) {
-                this.beginEntry = Integer.valueOf(b.beginEntry);
+                this.beginEntry = Integer.parseInt(b.beginEntry);
             }
             if (StringUtils.isNotBlank(b.endEntry)) {
-                this.endEntry = Integer.valueOf(b.endEntry);
+                this.endEntry = Integer.parseInt(b.endEntry);
             }
         }
         
