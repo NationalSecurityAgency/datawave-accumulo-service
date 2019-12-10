@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class AuthorizationFailure {
     
     @XmlElement
-    private OptionallyEncodedString tableId = null;
+    private OptionallyEncodedString tableName = null;
     
     @XmlElement
     private OptionallyEncodedString endRow = null;
@@ -21,8 +21,8 @@ public class AuthorizationFailure {
     @XmlElement
     private OptionallyEncodedString prevEndRow = null;
     
-    public OptionallyEncodedString getTableId() {
-        return tableId;
+    public OptionallyEncodedString getTableName() {
+        return tableName;
     }
     
     public OptionallyEncodedString getEndRow() {
@@ -33,8 +33,8 @@ public class AuthorizationFailure {
         return prevEndRow;
     }
     
-    public void setTableId(OptionallyEncodedString tableId) {
-        this.tableId = tableId;
+    public void setTableName(OptionallyEncodedString tableName) {
+        this.tableName = tableName;
     }
     
     public void setEndRow(OptionallyEncodedString endRow) {

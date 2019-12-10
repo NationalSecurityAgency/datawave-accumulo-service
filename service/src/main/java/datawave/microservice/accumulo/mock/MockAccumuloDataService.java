@@ -2,9 +2,10 @@ package datawave.microservice.accumulo.mock;
 
 import com.google.common.base.Preconditions;
 import datawave.microservice.accumulo.lookup.LookupService;
+import java.util.concurrent.TimeUnit;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.ColumnVisibility;
@@ -14,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * When the <strong>mock</strong> profile is activated, this bean will automatically ingest a tiny amount of data into an in-memory accumulo instance. The
@@ -31,10 +30,10 @@ public class MockAccumuloDataService {
     
     public static final String WAREHOUSE_MOCK_TABLE = "warehouseTestTable";
     
-    private final Connector warehouseConnector;
+    private final AccumuloClient warehouseConnector;
     
     @Autowired
-    public MockAccumuloDataService(@Qualifier("warehouse") Connector warehouseConnector) {
+    public MockAccumuloDataService(@Qualifier("warehouse") AccumuloClient warehouseConnector) {
         this.warehouseConnector = warehouseConnector;
         setupMockWarehouseTables();
     }
@@ -63,7 +62,7 @@ public class MockAccumuloDataService {
      * @throws Exception
      *             on error
      */
-    public void setupMockTable(Connector connector, String tableName) throws Exception {
+    public void setupMockTable(AccumuloClient connector, String tableName) throws Exception {
         if (connector.tableOperations().exists(tableName))
             connector.tableOperations().delete(tableName);
         
@@ -93,7 +92,7 @@ public class MockAccumuloDataService {
         }
     }
     
-    public Connector getWarehouseConnector() {
+    public AccumuloClient getWarehouseConnector() {
         return this.warehouseConnector;
     }
 }

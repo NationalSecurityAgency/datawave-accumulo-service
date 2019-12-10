@@ -17,7 +17,13 @@ import datawave.webservice.response.ValidateVisibilityResponse;
 import datawave.webservice.response.objects.SystemPermission;
 import datawave.webservice.response.objects.SystemPermission.SystemPermissionType;
 import datawave.webservice.result.VoidResponse;
-import org.apache.accumulo.core.client.Connector;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.StreamSupport;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.admin.SecurityOperations;
 import org.apache.accumulo.core.client.admin.TableOperations;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
@@ -38,13 +44,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -74,7 +73,7 @@ public class AdminServiceTest {
     
     @Autowired
     @Qualifier("warehouse")
-    private Connector warehouseConnector;
+    private AccumuloClient warehouseConnector;
     
     private JWTRestTemplate jwtRestTemplate;
     private ProxiedUserDetails defaultUserDetails;

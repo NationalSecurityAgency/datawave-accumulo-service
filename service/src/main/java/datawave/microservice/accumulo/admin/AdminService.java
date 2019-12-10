@@ -18,23 +18,20 @@ import datawave.webservice.response.objects.ConstraintViolation;
 import datawave.webservice.response.objects.UserPermissions;
 import datawave.webservice.response.objects.Visibility;
 import datawave.webservice.result.VoidResponse;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.MultiTableBatchWriter;
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.client.admin.NamespaceOperations;
 import org.apache.accumulo.core.client.admin.SecurityOperations;
 import org.apache.accumulo.core.client.admin.TableOperations;
-import org.apache.accumulo.core.clientImpl.ClientContext;
-import org.apache.accumulo.core.clientImpl.Tables;
 import org.apache.accumulo.core.client.security.SecurityErrorCode;
 import org.apache.accumulo.core.data.ConstraintViolationSummary;
 import org.apache.accumulo.core.data.TabletId;
-import org.apache.accumulo.core.dataImpl.KeyExtent;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
@@ -55,6 +52,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
@@ -70,10 +68,10 @@ public class AdminService {
     
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final MarkingFunctions markingFunctions;
-    private final Connector warehouseConnector;
+    private final AccumuloClient warehouseConnector;
     
     @Autowired
-    public AdminService(@Qualifier("warehouse") Connector warehouseConnector, MarkingFunctions markingFunctions) {
+    public AdminService(@Qualifier("warehouse") AccumuloClient warehouseConnector, MarkingFunctions markingFunctions) {
         this.warehouseConnector = warehouseConnector;
         this.markingFunctions = markingFunctions;
     }
@@ -515,7 +513,10 @@ public class AdminService {
                 for (Map.Entry<TabletId,Set<SecurityErrorCode>> next : authFailures.entrySet()) {
                     AuthorizationFailure failure = new AuthorizationFailure();
                     
-                    failure.setTableId(new OptionallyEncodedString(next.getKey().getTableId().toString()));
+                    Optional<Map.Entry<String,String>> tableNameToId = warehouseConnector.tableOperations().tableIdMap().entrySet().stream()
+                                    .filter(entry -> entry.getValue().equals(next.getKey().getTableId().toString())).findAny();
+                    String mappedTableName = (tableNameToId.isPresent() ? tableNameToId.get().getKey() : "unknown");
+                    failure.setTableName(new OptionallyEncodedString(mappedTableName));
                     failure.setEndRow(new OptionallyEncodedString(next.getKey().getEndRow().toString()));
                     failure.setPrevEndRow(new OptionallyEncodedString(next.getKey().getPrevEndRow().toString()));
                     // TODO: Add SecurityErrorCode to the AuthorizationFailure object

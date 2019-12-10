@@ -7,7 +7,9 @@ import datawave.microservice.audit.AuditClient;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
 import datawave.microservice.authorization.user.ProxiedUserDetails;
 import datawave.webservice.common.audit.Auditor;
-import org.apache.accumulo.core.client.Connector;
+import java.util.Arrays;
+import java.util.Collections;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,9 +35,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.hamcrest.text.StringContainsInOrder.stringContainsInOrder;
 import static org.junit.Assert.assertEquals;
@@ -74,7 +73,7 @@ public class LookupServiceAuditEnabledTest {
     
     @Autowired
     @Qualifier("warehouse")
-    private Connector connector;
+    private AccumuloClient connector;
     
     @Autowired
     private MockAccumuloDataService mockDataService;

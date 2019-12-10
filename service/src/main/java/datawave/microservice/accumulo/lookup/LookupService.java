@@ -18,8 +18,15 @@ import datawave.webservice.query.exception.QueryException;
 import datawave.webservice.response.LookupResponse;
 import datawave.webservice.response.objects.Entry;
 import datawave.webservice.response.objects.KeyBase;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.BatchScanner;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.PartialKey;
@@ -39,14 +46,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -81,7 +80,7 @@ public class LookupService {
     
     private final SecurityMarking auditSecurityMarking;
     private final MarkingFunctions markingFunctions;
-    private final Connector connection;
+    private final AccumuloClient connection;
     private final LookupAuditProperties lookupAuditProperties;
     private final LookupProperties lookupProperties;
     private final UserAuthFunctions userAuthFunctions;
@@ -97,7 +96,7 @@ public class LookupService {
         SecurityMarking auditSecurityMarking,
         MarkingFunctions markingFunctions,
         @Qualifier("warehouse")
-        Connector connection,
+        AccumuloClient connection,
         LookupAuditProperties lookupAuditProperties,
         LookupProperties lookupProperties,
         UserAuthFunctions userAuthFunctions,
