@@ -73,7 +73,7 @@ public class AdminServiceTest {
     
     @Autowired
     @Qualifier("warehouse")
-    private AccumuloClient warehouseConnector;
+    private AccumuloClient warehouseAccumuloClient;
     
     private JWTRestTemplate jwtRestTemplate;
     private ProxiedUserDetails defaultUserDetails;
@@ -177,7 +177,7 @@ public class AdminServiceTest {
         
         // Create a new Accumulo user and assign some auths
         String testUser = "testListUserAuthorizations";
-        SecurityOperations so = warehouseConnector.securityOperations();
+        SecurityOperations so = warehouseAccumuloClient.securityOperations();
         so.createLocalUser(testUser, new PasswordToken("test"));
         so.changeUserAuthorizations(testUser, new Authorizations("A", "B", "C", "D", "E", "F"));
         
@@ -226,7 +226,7 @@ public class AdminServiceTest {
     @Test
     public void testSetAndRemoveTableProperties() throws Exception {
         final String testTable = "testSetTableProperty";
-        warehouseConnector.tableOperations().create(testTable);
+        warehouseAccumuloClient.tableOperations().create(testTable);
         
         final String propKey = "datawave.test.foo";
         final String propVal = "testValue";
@@ -235,7 +235,7 @@ public class AdminServiceTest {
         String path = String.format("/setTableProperty/%s/%s/%s", testTable, propKey, propVal);
         th.assert200Status(th.createPostRequest(path, null), VoidResponse.class);
         
-        Iterable<Map.Entry<String,String>> props = warehouseConnector.tableOperations().getProperties(testTable);
+        Iterable<Map.Entry<String,String>> props = warehouseAccumuloClient.tableOperations().getProperties(testTable);
         
         //@formatter:off
         assertEquals(1, StreamSupport.stream(props.spliterator(), false).
@@ -246,7 +246,7 @@ public class AdminServiceTest {
         path = String.format("/removeTableProperty/%s/%s", testTable, propKey);
         th.assert200Status(th.createPostRequest(path, null), VoidResponse.class);
         
-        props = warehouseConnector.tableOperations().getProperties(testTable);
+        props = warehouseAccumuloClient.tableOperations().getProperties(testTable);
         
         //@formatter:off
         assertEquals(0, StreamSupport.stream(props.spliterator(), false).
@@ -262,7 +262,7 @@ public class AdminServiceTest {
         
         // First, create a new table...
         final String testTable = "testUpdateTable";
-        TableOperations tops = warehouseConnector.tableOperations();
+        TableOperations tops = warehouseAccumuloClient.tableOperations();
         tops.create(testTable);
         
         assertTrue("Table wasn't created as expected", tops.exists(testTable));

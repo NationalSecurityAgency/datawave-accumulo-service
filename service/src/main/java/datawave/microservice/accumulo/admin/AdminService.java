@@ -68,11 +68,11 @@ public class AdminService {
     
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final MarkingFunctions markingFunctions;
-    private final AccumuloClient warehouseConnector;
+    private final AccumuloClient warehouseAccumuloClient;
     
     @Autowired
-    public AdminService(@Qualifier("warehouse") AccumuloClient warehouseConnector, MarkingFunctions markingFunctions) {
-        this.warehouseConnector = warehouseConnector;
+    public AdminService(@Qualifier("warehouse") AccumuloClient warehouseAccumuloClient, MarkingFunctions markingFunctions) {
+        this.warehouseAccumuloClient = warehouseAccumuloClient;
         this.markingFunctions = markingFunctions;
     }
     
@@ -88,7 +88,7 @@ public class AdminService {
     public VoidResponse grantSystemPermission(String userName, String permission) {
         VoidResponse response = new VoidResponse();
         try {
-            SecurityOperations ops = warehouseConnector.securityOperations();
+            SecurityOperations ops = warehouseAccumuloClient.securityOperations();
             ops.grantSystemPermission(userName, SystemPermission.valueOf(permission));
         } catch (Exception e) {
             log.error("Failed to grant " + permission + " to user " + userName, e);
@@ -109,7 +109,7 @@ public class AdminService {
     public VoidResponse revokeSystemPermission(String userName, String permission) {
         VoidResponse response = new VoidResponse();
         try {
-            SecurityOperations ops = warehouseConnector.securityOperations();
+            SecurityOperations ops = warehouseAccumuloClient.securityOperations();
             ops.revokeSystemPermission(userName, SystemPermission.valueOf(permission));
         } catch (Exception e) {
             log.error("Failed to revoke " + permission + " to user " + userName, e);
@@ -132,7 +132,7 @@ public class AdminService {
     public VoidResponse grantTablePermission(String userName, String tableName, String permission) {
         VoidResponse response = new VoidResponse();
         try {
-            SecurityOperations ops = warehouseConnector.securityOperations();
+            SecurityOperations ops = warehouseAccumuloClient.securityOperations();
             ops.grantTablePermission(userName, tableName, TablePermission.valueOf(permission));
         } catch (Exception e) {
             log.error("Failed to grant " + permission + " to user " + userName, e);
@@ -155,7 +155,7 @@ public class AdminService {
     public VoidResponse revokeTablePermission(String userName, String tableName, String permission) {
         VoidResponse response = new VoidResponse();
         try {
-            SecurityOperations ops = warehouseConnector.securityOperations();
+            SecurityOperations ops = warehouseAccumuloClient.securityOperations();
             ops.revokeTablePermission(userName, tableName, TablePermission.valueOf(permission));
         } catch (Exception e) {
             log.error("Failed to revoke " + permission + " to user " + userName, e);
@@ -174,7 +174,7 @@ public class AdminService {
     public VoidResponse createTable(String tableName) {
         VoidResponse response = new VoidResponse();
         try {
-            TableOperations ops = warehouseConnector.tableOperations();
+            TableOperations ops = warehouseAccumuloClient.tableOperations();
             ops.create(tableName);
         } catch (Exception e) {
             log.error("Table creation failed for table: " + tableName, e);
@@ -193,7 +193,7 @@ public class AdminService {
     public VoidResponse flushTable(String tableName) {
         VoidResponse response = new VoidResponse();
         try {
-            TableOperations ops = warehouseConnector.tableOperations();
+            TableOperations ops = warehouseAccumuloClient.tableOperations();
             ops.flush(tableName, null, null, false);
         } catch (Exception e) {
             log.error("Table flush failed for table: " + tableName, e);
@@ -216,7 +216,7 @@ public class AdminService {
     public VoidResponse setTableProperty(String tableName, String propertyName, String propertyValue) {
         VoidResponse response = new VoidResponse();
         try {
-            TableOperations ops = warehouseConnector.tableOperations();
+            TableOperations ops = warehouseAccumuloClient.tableOperations();
             ops.setProperty(tableName, propertyName, propertyValue);
         } catch (Exception e) {
             log.error("Failed to set property: " + propertyName + ", value: " + propertyValue + ", table: " + tableName, e);
@@ -237,7 +237,7 @@ public class AdminService {
     public VoidResponse removeTableProperty(String tableName, String propertyName) {
         VoidResponse response = new VoidResponse();
         try {
-            TableOperations ops = warehouseConnector.tableOperations();
+            TableOperations ops = warehouseAccumuloClient.tableOperations();
             ops.removeProperty(tableName, propertyName);
         } catch (Exception e) {
             log.error("Failed to remove property: " + propertyName + ", table: " + tableName, e);
@@ -254,7 +254,7 @@ public class AdminService {
     public ListTablesResponse listTables() {
         ListTablesResponse response = new ListTablesResponse();
         try {
-            TableOperations ops = warehouseConnector.tableOperations();
+            TableOperations ops = warehouseAccumuloClient.tableOperations();
             SortedSet<String> availableTables = ops.list();
             List<String> tables = new ArrayList<>();
             tables.addAll(availableTables);
@@ -276,7 +276,7 @@ public class AdminService {
     public ListUserAuthorizationsResponse listUserAuthorizations(String userName) {
         ListUserAuthorizationsResponse response = new ListUserAuthorizationsResponse();
         try {
-            SecurityOperations ops = warehouseConnector.securityOperations();
+            SecurityOperations ops = warehouseAccumuloClient.securityOperations();
             Authorizations authorizations = ops.getUserAuthorizations(userName);
             List<String> authorizationsList = new ArrayList<>();
             for (byte[] b : authorizations.getAuthorizations()) {
@@ -300,7 +300,7 @@ public class AdminService {
     public ListUserPermissionsResponse listUserPermissions(String userName) {
         ListUserPermissionsResponse response = new ListUserPermissionsResponse();
         try {
-            SecurityOperations ops = warehouseConnector.securityOperations();
+            SecurityOperations ops = warehouseAccumuloClient.securityOperations();
             
             List<datawave.webservice.response.objects.SystemPermission> systemPermissions = new ArrayList<>();
             SystemPermission[] allSystemPerms = SystemPermission.values();
@@ -311,7 +311,7 @@ public class AdminService {
             }
             
             List<datawave.webservice.response.objects.TablePermission> tablePermissions = new ArrayList<>();
-            TableOperations tops = warehouseConnector.tableOperations();
+            TableOperations tops = warehouseAccumuloClient.tableOperations();
             SortedSet<String> tables = tops.list();
             TablePermission[] allTablePerms = TablePermission.values();
             for (String next : tables) {
@@ -323,7 +323,7 @@ public class AdminService {
             }
             
             List<datawave.webservice.response.objects.NamespacePermission> namespacePermissions = new ArrayList<>();
-            NamespaceOperations nops = warehouseConnector.namespaceOperations();
+            NamespaceOperations nops = warehouseAccumuloClient.namespaceOperations();
             SortedSet<String> namespaces = nops.list();
             NamespacePermission[] allNamespacePerms = NamespacePermission.values();
             for (String next : namespaces) {
@@ -355,7 +355,7 @@ public class AdminService {
     public ListUsersResponse listUsers() {
         ListUsersResponse response = new ListUsersResponse();
         try {
-            SecurityOperations ops = warehouseConnector.securityOperations();
+            SecurityOperations ops = warehouseAccumuloClient.securityOperations();
             Set<String> users = ops.listLocalUsers();
             List<String> userList = new ArrayList<>();
             userList.addAll(users);
@@ -396,7 +396,7 @@ public class AdminService {
             ArrayList<String> tablesNotFound = new ArrayList<>();
             HashMap<String,byte[]> globalDataRefs = new HashMap<>();
             
-            MultiTableBatchWriter writer = warehouseConnector
+            MultiTableBatchWriter writer = warehouseAccumuloClient
                             .createMultiTableBatchWriter(new BatchWriterConfig().setMaxLatency(3, TimeUnit.SECONDS).setMaxMemory(50000).setMaxWriteThreads(5));
             
             log.trace("Processing Update Request - Connector and MultiTableBatchWriter created!");
@@ -513,7 +513,7 @@ public class AdminService {
                 for (Map.Entry<TabletId,Set<SecurityErrorCode>> next : authFailures.entrySet()) {
                     AuthorizationFailure failure = new AuthorizationFailure();
                     
-                    Optional<Map.Entry<String,String>> tableNameToId = warehouseConnector.tableOperations().tableIdMap().entrySet().stream()
+                    Optional<Map.Entry<String,String>> tableNameToId = warehouseAccumuloClient.tableOperations().tableIdMap().entrySet().stream()
                                     .filter(entry -> entry.getValue().equals(next.getKey().getTableId().toString())).findAny();
                     String mappedTableName = (tableNameToId.isPresent() ? tableNameToId.get().getKey() : "unknown");
                     failure.setTableName(new OptionallyEncodedString(mappedTableName));
@@ -558,8 +558,8 @@ public class AdminService {
         
         ValidateVisibilityResponse response = new ValidateVisibilityResponse();
         try {
-            SecurityOperations securityOps = warehouseConnector.securityOperations();
-            Authorizations authorizations = securityOps.getUserAuthorizations(warehouseConnector.whoami());
+            SecurityOperations securityOps = warehouseAccumuloClient.securityOperations();
+            Authorizations authorizations = securityOps.getUserAuthorizations(warehouseAccumuloClient.whoami());
             List<Visibility> visibilityList = new ArrayList<>();
             
             for (String v : visibilityArray) {
