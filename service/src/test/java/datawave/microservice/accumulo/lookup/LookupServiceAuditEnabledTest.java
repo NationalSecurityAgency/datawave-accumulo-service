@@ -10,11 +10,8 @@ import datawave.webservice.common.audit.Auditor;
 import java.util.Arrays;
 import java.util.Collections;
 import org.apache.accumulo.core.client.AccumuloClient;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +24,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -36,10 +32,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import static org.hamcrest.text.StringContainsInOrder.stringContainsInOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static datawave.microservice.accumulo.TestHelper.assertExceptionMessage;
+import static datawave.microservice.accumulo.TestHelper.assertHttpException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -55,16 +53,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * Note that by activating the "mock" profile we get a properly initialized in-memory Accumulo instance with a canned dataset pre-loaded via
  * {@link MockAccumuloConfiguration}
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "spring.main.allow-bean-definition-overriding=true")
 @ComponentScan(basePackages = "datawave.microservice")
 @ActiveProfiles({"mock", "lookup-with-audit-enabled"})
 public class LookupServiceAuditEnabledTest {
     
     public static final String BASE_PATH = "/accumulo/v1";
-    
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
     
     private static final String EXPECTED_AUDIT_URI = "http://localhost:11111/audit/v1/audit";
     
@@ -93,8 +87,8 @@ public class LookupServiceAuditEnabledTest {
     private MockRestServiceServer mockAuditServer;
     private ProxiedUserDetails defaultUserDetails;
     
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    public void setup() {
         defaultUserDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I"));
         jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
         testTableName = MockAccumuloDataService.WAREHOUSE_MOCK_TABLE;
@@ -103,30 +97,30 @@ public class LookupServiceAuditEnabledTest {
     
     @Test
     public void verifyAutoConfig() {
-        assertTrue("auditServiceConfiguration bean not found", context.containsBean("auditServiceConfiguration"));
-        assertTrue("auditServiceInstanceProvider bean not found", context.containsBean("auditServiceInstanceProvider"));
-        assertTrue("auditLookupSecurityMarking bean not found", context.containsBean("auditLookupSecurityMarking"));
-        assertTrue("lookupService bean not found", context.containsBean("lookupService"));
-        assertTrue("lookupController bean not found", context.containsBean("lookupController"));
+        assertTrue(context.containsBean("auditServiceConfiguration"), "auditServiceConfiguration bean not found");
+        assertTrue(context.containsBean("auditServiceInstanceProvider"), "auditServiceInstanceProvider bean not found");
+        assertTrue(context.containsBean("auditLookupSecurityMarking"), "auditLookupSecurityMarking bean not found");
+        assertTrue(context.containsBean("lookupService"), "lookupService bean not found");
+        assertTrue(context.containsBean("lookupController"), "lookupController bean not found");
         
-        assertFalse("statsService bean should not have been found", context.containsBean("statsService"));
-        assertFalse("statsController bean should not have been found", context.containsBean("statsController"));
-        assertFalse("adminService bean should not have been found", context.containsBean("adminService"));
-        assertFalse("adminController bean should not have been found", context.containsBean("adminController"));
+        assertFalse(context.containsBean("statsService"), "statsService bean should not have been found");
+        assertFalse(context.containsBean("statsController"), "statsController bean should not have been found");
+        assertFalse(context.containsBean("adminService"), "adminService bean should not have been found");
+        assertFalse(context.containsBean("adminController"), "adminController bean should not have been found");
     }
     
     @Test
-    public void testLookupRow1AndVerifyAuditURI() throws Exception {
+    public void testLookupRow1AndVerifyAuditURI() {
         testLookupAndVerifyAuditUriWithSuccess(testTableName, "row1", Auditor.AuditType.ACTIVE);
     }
     
     @Test
-    public void testLookupRow2AndVerifyAuditURI() throws Exception {
+    public void testLookupRow2AndVerifyAuditURI() {
         testLookupAndVerifyAuditUriWithSuccess(testTableName, "row2", Auditor.AuditType.PASSIVE);
     }
     
     @Test
-    public void testLookupRow3AndVerifyAuditURI() throws Exception {
+    public void testLookupRow3AndVerifyAuditURI() {
         testLookupAndVerifyAuditUriWithSuccess(testTableName, "row3", Auditor.AuditType.ACTIVE);
     }
     
@@ -143,11 +137,10 @@ public class LookupServiceAuditEnabledTest {
     @Test
     public void testAuditTypeACTIVE_VerifyZeroAudits() throws Exception {
         // All mockAuditServer expectation(s) must fail
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(stringContainsInOrder("\n0 request(s) executed"));
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule1");
         mockAuditServer.expect(anything());
-        testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule1", "row3", Auditor.AuditType.ACTIVE);
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
+                        () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule1", "row3", Auditor.AuditType.ACTIVE));
     }
     
     /**
@@ -157,11 +150,10 @@ public class LookupServiceAuditEnabledTest {
     @Test
     public void testAuditTypePASSIVE_VerifyZeroAudits() throws Exception {
         // All mockAuditServer expectation(s) must fail
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(stringContainsInOrder("\n0 request(s) executed"));
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule2");
         mockAuditServer.expect(anything());
-        testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule2", "row3", Auditor.AuditType.PASSIVE);
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
+                        () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule2", "row3", Auditor.AuditType.PASSIVE));
     }
     
     /**
@@ -171,11 +163,10 @@ public class LookupServiceAuditEnabledTest {
     @Test
     public void testAuditTypeNONE_VerifyZeroAudits() throws Exception {
         // All mockAuditServer expectation(s) must fail
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(stringContainsInOrder("\n0 request(s) executed"));
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule3");
         mockAuditServer.expect(anything());
-        testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule3", "row3", Auditor.AuditType.NONE);
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
+                        () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule3", "row3", Auditor.AuditType.NONE));
     }
     
     /**
@@ -185,22 +176,19 @@ public class LookupServiceAuditEnabledTest {
     @Test
     public void testAuditTypeLOCALONLY_VerifyZeroAudits() throws Exception {
         // All mockAuditServer expectation(s) must fail
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(stringContainsInOrder("\n0 request(s) executed"));
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule4");
         mockAuditServer.expect(anything());
-        testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule4", "row3", Auditor.AuditType.LOCALONLY);
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
+                        () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule4", "row3", Auditor.AuditType.LOCALONLY));
     }
     
     @Test
-    public void testErrorOnMissingColVizParam() throws Exception {
-        expectedException.expect(HttpClientErrorException.class);
-        expectedException.expect(new TestHelper.StatusMatcher(400));
-        ProxiedUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A"));
-        doLookup(userDetails, path(testTableName + "/row2"), "NotColumnVisibility=foo");
+    public void testErrorOnMissingColVizParam() {
+        ProxiedUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Collections.singletonList("A"));
+        assertHttpException(HttpClientErrorException.class, 400, () -> doLookup(userDetails, path(testTableName + "/row2"), "NotColumnVisibility=foo"));
     }
     
-    private void testLookupAndVerifyAuditUriWithSuccess(String targetTable, String targetRow, Auditor.AuditType expectedAuditType) throws Exception {
+    private void testLookupAndVerifyAuditUriWithSuccess(String targetTable, String targetRow, Auditor.AuditType expectedAuditType) {
         
         String auditColViz = "foo";
         String queryAuths = "A,C,E,G,I";
@@ -240,24 +228,19 @@ public class LookupServiceAuditEnabledTest {
     private void setupMockAuditServer() {
         // Here we're mocking the jwtRestTemplate field within the AuditClient instance
         // owned by our lookupService, i.e., lookupService.auditor.jwtRestTemplate
-        //@formatter:off
-        RestTemplate auditorRestTemplate = (RestTemplate)
-            new DirectFieldAccessor(
-                new DirectFieldAccessor(
-                    lookupService
-                ).getPropertyValue("auditor")
-            ).getPropertyValue("jwtRestTemplate");
-        //@formatter:on
+        Object auditor = new DirectFieldAccessor(lookupService).getPropertyValue("auditor");
+        assertNotNull(auditor);
+        RestTemplate auditorRestTemplate = (RestTemplate) new DirectFieldAccessor(auditor).getPropertyValue("jwtRestTemplate");
+        assertNotNull(auditorRestTemplate);
         mockAuditServer = MockRestServiceServer.createServer(auditorRestTemplate);
     }
     
     /**
      * Lookups here should return one or more valid Accumulo table entries. If not, an exception is thrown
      */
-    private ResponseEntity<String> doLookup(ProxiedUserDetails authUser, String path, String query) throws Exception {
+    private void doLookup(ProxiedUserDetails authUser, String path, String query) {
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path(path).query(query).build();
         ResponseEntity<String> entity = jwtRestTemplate.exchange(authUser, HttpMethod.GET, uri, String.class);
-        assertEquals("Lookup request to " + uri + " did not return 200 status", HttpStatus.OK, entity.getStatusCode());
-        return entity;
+        assertEquals(HttpStatus.OK, entity.getStatusCode(), "Lookup request to " + uri + " did not return 200 status");
     }
 }

@@ -9,8 +9,8 @@ import datawave.webservice.query.exception.QueryExceptionType;
 import datawave.webservice.response.objects.DefaultKey;
 import datawave.webservice.response.objects.Entry;
 import datawave.webservice.response.objects.KeyBase;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -19,15 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LookupResponseTest {
     
     private LookupResponse lookupResponse;
     private ObjectMapper objectMapper;
     
-    @Before
+    @BeforeEach
     public void setup() {
         objectMapperSetup();
         responseSetup();

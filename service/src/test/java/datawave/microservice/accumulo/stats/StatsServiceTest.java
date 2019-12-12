@@ -1,20 +1,21 @@
 package datawave.microservice.accumulo.stats;
 
+import datawave.accumulo.inmemory.InMemoryAccumuloClient;
 import datawave.accumulo.inmemory.InMemoryInstance;
 import datawave.microservice.accumulo.TestHelper;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
 import datawave.microservice.authorization.user.ProxiedUserDetails;
 import datawave.webservice.response.StatsResponse;
-import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.AccumuloClient;
+import org.apache.accumulo.core.conf.ClientProperty;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.curator.test.TestingServer;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,18 +30,18 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -55,7 +56,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * {@link StatsResponse}). For this, we rely on a {@link MockRestServiceServer} to mock the monitor servlet's xml response, which is served from
  * {@code src/test/resources/accumulo-monitor-stats.xml}
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "spring.main.allow-bean-definition-overriding=true")
 @ContextConfiguration(classes = StatsServiceTest.TestConfig.class)
 @ActiveProfiles({"StatsServiceTest", "stats-service-enabled"})
@@ -89,7 +89,7 @@ public class StatsServiceTest {
     private MockRestServiceServer mockMonitorServer;
     private TestHelper th;
     
-    @BeforeClass
+    @BeforeAll
     public static void setupZK() throws Exception {
         //@formatter:off
         server = new TestingServer(ZK_PORT, true);
@@ -98,12 +98,12 @@ public class StatsServiceTest {
         //@formatter:on
     }
     
-    @AfterClass
+    @AfterAll
     public static void tearDownZK() throws Exception {
         server.stop();
     }
     
-    @Before
+    @BeforeEach
     public void setup() {
         // REST api user must have Administrator role
         defaultUserDetails = TestHelper.userDetails(Collections.singleton("Administrator"), null);
@@ -116,16 +116,16 @@ public class StatsServiceTest {
     
     @Test
     public void verifyAutoConfig() {
-        assertTrue("statsService bean not found", context.containsBean("statsService"));
-        assertTrue("statsController bean not found", context.containsBean("statsController"));
+        assertTrue(context.containsBean("statsService"), "statsService bean not found");
+        assertTrue(context.containsBean("statsController"), "statsController bean not found");
         
-        assertFalse("auditServiceConfiguration bean should not have been found", context.containsBean("auditServiceConfiguration"));
-        assertFalse("auditServiceInstanceProvider bean should not have been found", context.containsBean("auditServiceInstanceProvider"));
-        assertFalse("auditLookupSecurityMarking bean should not have been found", context.containsBean("auditLookupSecurityMarking"));
-        assertFalse("lookupService bean should not have been found", context.containsBean("lookupService"));
-        assertFalse("lookupController bean should not have been found", context.containsBean("lookupController"));
-        assertFalse("adminService bean should not have been found", context.containsBean("adminService"));
-        assertFalse("adminController bean should not have been found", context.containsBean("adminController"));
+        assertFalse(context.containsBean("auditServiceConfiguration"), "auditServiceConfiguration bean should not have been found");
+        assertFalse(context.containsBean("auditServiceInstanceProvider"), "auditServiceInstanceProvider bean should not have been found");
+        assertFalse(context.containsBean("auditLookupSecurityMarking"), "auditLookupSecurityMarking bean should not have been found");
+        assertFalse(context.containsBean("lookupService"), "lookupService bean should not have been found");
+        assertFalse(context.containsBean("lookupController"), "lookupController bean should not have been found");
+        assertFalse(context.containsBean("adminService"), "adminService bean should not have been found");
+        assertFalse(context.containsBean("adminController"), "adminController bean should not have been found");
     }
     
     @Test
@@ -175,11 +175,13 @@ public class StatsServiceTest {
          */
         @Bean
         @Qualifier("warehouse")
-        public Instance warehouseInstance() throws Exception {
-            final Instance instance = new InMemoryInstance() {
+        public AccumuloClient warehouseClient() throws Exception {
+            Properties testProperties = new Properties();
+            testProperties.setProperty(ClientProperty.INSTANCE_ZOOKEEPERS.getKey(), String.format("localhost:%d", ZK_PORT));
+            final AccumuloClient accumuloClient = new InMemoryAccumuloClient("root", new InMemoryInstance("testInstance")) {
                 @Override
-                public String getZooKeepers() {
-                    return String.format("localhost:%d", ZK_PORT);
+                public Properties properties() {
+                    return testProperties;
                 }
             };
             //@formatter:off
@@ -187,11 +189,11 @@ public class StatsServiceTest {
                     String.format("localhost:%d", ZK_PORT), new RetryOneTime(500))) {
                 curator.start();
                 curator.create().creatingParentContainersIfNeeded()
-                    .forPath(String.format(ZK_MONITOR_PATH, instance.getInstanceID()), ZK_MONITOR_DATA.getBytes());
+                    .forPath(String.format(ZK_MONITOR_PATH, accumuloClient.instanceOperations().getInstanceID()), ZK_MONITOR_DATA.getBytes());
             }
             //@formatter:on
             
-            return instance;
+            return accumuloClient;
         }
     }
 }

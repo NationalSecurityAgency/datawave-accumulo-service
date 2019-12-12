@@ -16,6 +16,7 @@ import datawave.webservice.response.UpdateResponse;
 import datawave.webservice.response.ValidateVisibilityResponse;
 import datawave.webservice.response.objects.SystemPermission;
 import datawave.webservice.response.objects.SystemPermission.SystemPermissionType;
+import datawave.webservice.response.objects.Visibility;
 import datawave.webservice.result.VoidResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,9 +29,8 @@ import org.apache.accumulo.core.client.admin.SecurityOperations;
 import org.apache.accumulo.core.client.admin.TableOperations;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.security.Authorizations;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,23 +40,22 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.RequestEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * These tests exercise the endpoints defined by the AdminController, and thus the respective methods of the underlying AdminService delegate are tested as
  * well. Leverages the "mock" profile to provide an in-memory Accumulo instance
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "spring.main.allow-bean-definition-overriding=true")
 @ComponentScan(basePackages = "datawave.microservice")
 @ActiveProfiles({"mock", "admin-service-enabled"})
@@ -75,16 +74,15 @@ public class AdminServiceTest {
     @Qualifier("warehouse")
     private AccumuloClient warehouseAccumuloClient;
     
-    private JWTRestTemplate jwtRestTemplate;
     private ProxiedUserDetails defaultUserDetails;
     private String defaultAccumuloUser;
     private TestHelper th;
     
-    @Before
+    @BeforeEach
     public void setup() {
         // REST api user must have Administrator role
         defaultUserDetails = TestHelper.userDetails(Collections.singleton("Administrator"), null);
-        jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
+        JWTRestTemplate jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
         defaultAccumuloUser = "root";
         
         th = new TestHelper(jwtRestTemplate, defaultUserDetails, webServicePort, "/accumulo/v1/admin");
@@ -92,16 +90,16 @@ public class AdminServiceTest {
     
     @Test
     public void verifyAutoConfig() {
-        assertTrue("adminService bean not found", context.containsBean("adminService"));
-        assertTrue("adminController bean not found", context.containsBean("adminController"));
+        assertTrue(context.containsBean("adminService"), "adminService bean not found");
+        assertTrue(context.containsBean("adminController"), "adminController bean not found");
         
-        assertFalse("auditServiceConfiguration bean should not have been found", context.containsBean("auditServiceConfiguration"));
-        assertFalse("auditServiceInstanceProvider bean should not have been found", context.containsBean("auditServiceInstanceProvider"));
-        assertFalse("auditLookupSecurityMarking bean should not have been found", context.containsBean("auditLookupSecurityMarking"));
-        assertFalse("lookupService bean should not have been found", context.containsBean("lookupService"));
-        assertFalse("lookupController bean should not have been found", context.containsBean("lookupController"));
-        assertFalse("statsService bean should not have been found", context.containsBean("statsService"));
-        assertFalse("statsController bean should not have been found", context.containsBean("statsController"));
+        assertFalse(context.containsBean("auditServiceConfiguration"), "auditServiceConfiguration bean should not have been found");
+        assertFalse(context.containsBean("auditServiceInstanceProvider"), "auditServiceInstanceProvider bean should not have been found");
+        assertFalse(context.containsBean("auditLookupSecurityMarking"), "auditLookupSecurityMarking bean should not have been found");
+        assertFalse(context.containsBean("lookupService"), "lookupService bean should not have been found");
+        assertFalse(context.containsBean("lookupController"), "lookupController bean should not have been found");
+        assertFalse(context.containsBean("statsService"), "statsService bean should not have been found");
+        assertFalse(context.containsBean("statsController"), "statsController bean should not have been found");
     }
     
     /**
@@ -265,7 +263,7 @@ public class AdminServiceTest {
         TableOperations tops = warehouseAccumuloClient.tableOperations();
         tops.create(testTable);
         
-        assertTrue("Table wasn't created as expected", tops.exists(testTable));
+        assertTrue(tops.exists(testTable), "Table wasn't created as expected");
         
         // Create an UpdateRequest with 2 mutations
         UpdateRequest request = createUpdateRequest(testTable);
@@ -273,14 +271,14 @@ public class AdminServiceTest {
         // Use AdminController to write the mutations...
         UpdateResponse response = th.assert200Status(th.createPutRequest("/update", request), UpdateResponse.class);
         
-        assertNotNull("UpdateResponse should not have been NULL", response);
+        assertNotNull(response, "UpdateResponse should not have been NULL");
         
         // Verify the correct number of mutations were written..
         
-        assertEquals("MutationsAccepted should have been 2", 2, response.getMutationsAccepted().intValue());
-        assertEquals("MutationsDenied should have been 0", 0, response.getMutationsDenied().intValue());
-        assertNull("TableNotFoundList should have been NULL", response.getTableNotFoundList());
-        assertNull("AuthorizationFailures should have been NULL", response.getAuthorizationFailures());
+        assertEquals(2, response.getMutationsAccepted().intValue(), "MutationsAccepted should have been 2");
+        assertEquals(0, response.getMutationsDenied().intValue(), "MutationsDenied should have been 0");
+        assertNull(response.getTableNotFoundList(), "TableNotFoundList should have been NULL");
+        assertNull(response.getAuthorizationFailures(), "AuthorizationFailures should have been NULL");
     }
     
     /**
@@ -298,10 +296,9 @@ public class AdminServiceTest {
         
         //@formatter:off
         assertNotNull(response);
-        assertEquals("There should have been 4 visibilities in the response",
-                4, response.getVisibilityList().size());
-        assertEquals("There should have been 3 valid visibilities in the response",
-                3, response.getVisibilityList().stream().filter(v -> v.getValid()).count());
+        assertEquals(4, response.getVisibilityList().size(), "There should have been 4 visibilities in the response");
+        assertEquals(3, response.getVisibilityList().stream().filter(Visibility::getValid).count(),
+                "There should have been 3 valid visibilities in the response");
         //@formatter:on
     }
     
@@ -364,9 +361,10 @@ public class AdminServiceTest {
     /**
      * Tests AdminController with non-existent user
      */
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testUnknownAccumuloUser() {
-        grantSystemPermission(defaultUserDetails, "thisuserdoesnotexist", SystemPermissionType.CREATE_TABLE.name());
+        assertThrows(HttpServerErrorException.class,
+                        () -> grantSystemPermission(defaultUserDetails, "thisuserdoesnotexist", SystemPermissionType.CREATE_TABLE.name()));
     }
     
     /**
@@ -380,7 +378,7 @@ public class AdminServiceTest {
             grantSystemPermission(unauthorizedUser, defaultAccumuloUser, SystemPermissionType.CREATE_TABLE.name());
             fail("This test should have thrown HttpClientErrorException with 403 status");
         } catch (HttpClientErrorException hcee) {
-            assertEquals("Test should have returned 403 status", 403, hcee.getStatusCode().value());
+            assertEquals(403, hcee.getStatusCode().value(), "Test should have returned 403 status");
         }
     }
 }

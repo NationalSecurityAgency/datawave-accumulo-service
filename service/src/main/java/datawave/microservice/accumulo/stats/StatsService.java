@@ -3,6 +3,7 @@ package datawave.microservice.accumulo.stats;
 import datawave.microservice.accumulo.stats.config.StatsConfiguration.JaxbProperties;
 import datawave.microservice.accumulo.stats.util.AccumuloMonitorLocator;
 import datawave.webservice.response.StatsResponse;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.Instance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,17 +44,17 @@ public class StatsService {
     private String monitorStatsUri = null;
     
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final Instance warehouseInstance;
+    private final AccumuloClient warehouseClient;
     private final RestTemplate restTemplate;
     private final JaxbProperties namespaceProperties;
     
     @Autowired
     //@formatter:off
     public StatsService(
-            @Qualifier("warehouse") Instance warehouseInstance,
+            @Qualifier("warehouse") AccumuloClient warehouseClient,
             RestTemplateBuilder restTemplateBuilder,
             JaxbProperties namespaceProperties) {
-        this.warehouseInstance = warehouseInstance;
+        this.warehouseClient = warehouseClient;
         this.restTemplate = restTemplateBuilder.build();
         this.namespaceProperties = namespaceProperties;
         //@formatter:on
@@ -62,7 +63,7 @@ public class StatsService {
     @PostConstruct
     public synchronized void discoverAccumuloMonitor() {
         try {
-            monitorStatsUri = String.format(MONITOR_STATS_URI, new AccumuloMonitorLocator().getHostPort(warehouseInstance));
+            monitorStatsUri = String.format(MONITOR_STATS_URI, new AccumuloMonitorLocator().getHostPort(warehouseClient));
         } catch (Exception e) {
             log.error("Failed to discover Accumulo monitor location", e);
         }
