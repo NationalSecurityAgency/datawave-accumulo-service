@@ -20,7 +20,7 @@
         <start-class>datawave.microservice.accumulo.AccumuloService</start-class>
         <version.curator>2.13.0</version.curator>
         <version.microservice.accumulo-api>1.1</version.microservice.accumulo-api>
-        <version.microservice.starter-datawave>1.6.1</version.microservice.starter-datawave>
+        <version.microservice.starter-datawave>1.6.2</version.microservice.starter-datawave>
         <version.microservice.starter-datawave-audit>1.0</version.microservice.starter-datawave-audit>
     </properties>
     <dependencyManagement>
