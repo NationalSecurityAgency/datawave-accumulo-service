@@ -1,5 +1,7 @@
 ## Accumulo Service
 
+[![Apache License][li]][ll] ![Build Status](https://github.com/NationalSecurityAgency/datawave-accumulo-service/workflows/Tests/badge.svg)
+
 The Accumulo service is an administrator utility that provides a rest API
 which exposes a small subset of Accumulo's table and security operations to
 external clients. Users must possess the **Administrator** role to access
@@ -100,3 +102,6 @@ the monitor's raw stats response to external clients
 [testUser]:https://github.com/NationalSecurityAgency/datawave-spring-boot-starter/blob/master/src/main/resources/testUser.p12
 [accumulo-dev-yml]:https://github.com/NationalSecurityAgency/datawave-microservices-root/blob/master/sample_configuration/accumulo-dev.yml.example
 [auth-mock-yml]:https://github.com/NationalSecurityAgency/datawave-microservices-root/blob/master/sample_configuration/authorization-mock.yml
+
+[li]: http://img.shields.io/badge/license-ASL-blue.svg
+[ll]: https://www.apache.org/licenses/LICENSE-2.0
