@@ -55,8 +55,7 @@ audit-client:
 
 ---
 
-spring:
-  profiles: 'mock'
+spring.config.activate.on-profile: 'mock'
 
 # Mock accumulo setup
 
@@ -69,8 +68,7 @@ warehouse-cluster:
 
 ---
 
-spring:
-  profiles: lookup-with-audit-disabled
+spring.config.activate.on-profile: lookup-with-audit-disabled
 
 audit-client:
   enabled: false
@@ -85,8 +83,7 @@ accumulo:
 
 ---
 
-spring:
-  profiles: lookup-with-audit-enabled
+spring.config.activate.on-profile: lookup-with-audit-enabled
 
 audit-client:
   uri: '${AUDIT_SERVER_URL:http://localhost:11111/audit}'
@@ -128,8 +125,7 @@ accumulo:
 
 ---
 
-spring:
-  profiles: all-services-disabled
+spring.config.activate.on-profile: all-services-disabled
 
 audit-client:
   enabled: false
@@ -144,8 +140,7 @@ accumulo:
 
 ---
 
-spring:
-  profiles: admin-service-enabled
+spring.config.activate.on-profile: admin-service-enabled
 
 audit-client:
   enabled: false
@@ -158,8 +153,7 @@ accumulo:
 
 ---
 
-spring:
-  profiles: stats-service-enabled
+spring.config.activate.on-profile: stats-service-enabled
 
 audit-client:
   enabled: false
