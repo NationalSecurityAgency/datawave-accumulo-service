@@ -21,7 +21,7 @@ spring:
 # here by default (re-enable in accumulo-dev.yml if needed)
 
 spring:
-  profiles: 'dev'
+  config.activate.on-profile: 'dev'
   cloud:
     config:
       uri: '${CONFIG_SERVER_URL:http://localhost:8888/configserver}'
@@ -32,7 +32,7 @@ audit-client:
 ---
 
 spring:
-  profiles: 'consul'
+  config.activate.on-profile: 'consul'
   cloud:
     config:
       # Use Consul to locate the configuration server and bootstrap app config.
@@ -51,8 +51,7 @@ spring:
 # with query auditing enabled without having to worry about setting up your own accumulo
 # instance.
 
-spring:
-  profiles: 'mock'
+spring.config.activate.on-profile: 'mock'
 
 # Mock for accumulo, see MockAccumuloConfiguration class, which manages connector-specific
 # beans and also ingests the canned data.
