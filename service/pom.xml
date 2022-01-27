@@ -8,12 +8,13 @@
         <relativePath />
     </parent>
     <artifactId>accumulo-service</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
     <description>DATAWAVE Accumulo Microservice</description>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <scm>
         <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-accumulo-service.git</connection>
         <developerConnection>scm:git:git@github.com:NationalSecurityAgency/datawave-accumulo-service.git</developerConnection>
+        <tag>HEAD</tag>
         <url>https://github.com/NationalSecurityAgency/datawave-accumulo-service</url>
     </scm>
     <properties>
@@ -21,7 +22,7 @@
         <version.curator>5.2.0</version.curator>
         <version.curator.test>5.2.0</version.curator.test>
         <version.hadoop>3.0.3</version.hadoop>
-        <version.microservice.accumulo-api>1.2-SNAPSHOT</version.microservice.accumulo-api>
+        <version.microservice.accumulo-api>1.3-SNAPSHOT</version.microservice.accumulo-api>
         <version.microservice.starter-datawave>1.6.6-SNAPSHOT</version.microservice.starter-datawave>
         <version.microservice.starter-datawave-audit>1.3-SNAPSHOT</version.microservice.starter-datawave-audit>
         <version.zookeeper>3.6.3</version.zookeeper>
@@ -40,6 +41,10 @@
                     <exclusion>
                         <artifactId>*</artifactId>
                         <groupId>org.slf4j</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>servlet-api</artifactId>
+                        <groupId>javax.servlet</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
