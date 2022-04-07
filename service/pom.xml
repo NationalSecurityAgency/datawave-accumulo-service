@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>accumulo-service</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3</version>
     <description>DATAWAVE Accumulo Microservice</description>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <scm>
@@ -20,7 +20,7 @@
     <properties>
         <start-class>datawave.microservice.accumulo.AccumuloService</start-class>
         <version.curator>2.13.0</version.curator>
-        <version.microservice.accumulo-api>1.2</version.microservice.accumulo-api>
+        <version.microservice.accumulo-api>1.3</version.microservice.accumulo-api>
         <version.microservice.starter-datawave>1.6.7</version.microservice.starter-datawave>
         <version.microservice.starter-datawave-audit>1.2</version.microservice.starter-datawave-audit>
         <version.zookeeper>3.4.14</version.zookeeper>
