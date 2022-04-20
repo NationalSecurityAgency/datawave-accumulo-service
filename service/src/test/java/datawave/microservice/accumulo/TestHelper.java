@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static datawave.security.authorization.DatawaveUser.UserType.USER;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Utility class for simplifying most of the typical REST API test functions
@@ -43,7 +43,7 @@ public class TestHelper {
     
     public <T> T assert200Status(RequestEntity<?> request, Class<T> responseType) {
         ResponseEntity<T> entity = jwtRestTemplate.exchange(request, responseType);
-        assertEquals("Request to '" + request.getUrl() + "' did not return 200 status", HttpStatus.OK, entity.getStatusCode());
+        assertEquals(HttpStatus.OK, entity.getStatusCode(), "Request to '" + request.getUrl() + "' did not return 200 status");
         return entity.getBody();
     }
     

@@ -38,9 +38,7 @@ public class DefaultKey extends KeyBase {
         this.timestamp = new TypedValue(timestamp);
     }
     
-    public DefaultKey() {
-        
-    }
+    public DefaultKey() {}
     
     @Override
     public String getRow() {

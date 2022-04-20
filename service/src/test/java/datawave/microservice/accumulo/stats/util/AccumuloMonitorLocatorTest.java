@@ -6,13 +6,13 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.curator.test.TestingServer;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AccumuloMonitorLocatorTest {
     
@@ -21,7 +21,7 @@ public class AccumuloMonitorLocatorTest {
     
     private static TestingServer server;
     
-    @BeforeClass
+    @BeforeAll
     public static void setupZk() throws Exception {
         server = new TestingServer(ZK_PORT, true);
     }
@@ -29,7 +29,7 @@ public class AccumuloMonitorLocatorTest {
     private Instance accumuloInstance;
     private AccumuloMonitorLocator locator = new AccumuloMonitorLocator();
     
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         accumuloInstance = new InMemoryInstance() {
             @Override
@@ -50,7 +50,7 @@ public class AccumuloMonitorLocatorTest {
         assertThat(locator.getHostPort(accumuloInstance), is(MONITOR_LOC));
     }
     
-    @AfterClass
+    @AfterAll
     public static void tearDownZk() throws Exception {
         server.stop();
     }
