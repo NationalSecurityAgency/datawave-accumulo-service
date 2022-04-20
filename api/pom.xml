@@ -85,6 +85,9 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <!-- For some reason, this is the only pom that can't bring in an updated version of jackson, so
+                uncomment this when that's figured out and remove the hard-coded value. -->
+                <!--                <version>${version.jackson}}</version>-->
                 <version>2.12.1</version>
                 <scope>test</scope>
             </dependency>
