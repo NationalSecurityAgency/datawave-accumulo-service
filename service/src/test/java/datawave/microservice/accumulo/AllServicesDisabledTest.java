@@ -1,18 +1,18 @@
 package datawave.microservice.accumulo;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "spring.main.allow-bean-definition-overriding=true")
 @ComponentScan(basePackages = "datawave.microservice")
 @ActiveProfiles({"all-services-disabled"})
@@ -24,14 +24,14 @@ public class AllServicesDisabledTest {
     @Test
     public void verifyAutoConfig() {
         assertTrue("accumuloService bean should have been found", context.containsBean("accumuloService"));
-        assertFalse("auditServiceConfiguration bean should not have been found", context.containsBean("auditServiceConfiguration"));
-        assertFalse("auditServiceInstanceProvider bean should not have been found", context.containsBean("auditServiceInstanceProvider"));
-        assertFalse("auditLookupSecurityMarking bean should not have been found", context.containsBean("auditLookupSecurityMarking"));
-        assertFalse("lookupService bean should not have been found", context.containsBean("lookupService"));
-        assertFalse("lookupController bean should not have been found", context.containsBean("lookupController"));
-        assertFalse("statsController bean should not have been found", context.containsBean("statsController"));
-        assertFalse("statsService bean should not have been found", context.containsBean("statsService"));
-        assertFalse("adminController bean should not have been found", context.containsBean("adminController"));
-        assertFalse("adminService bean should not have been found", context.containsBean("adminService"));
+        assertFalse(context.containsBean("auditServiceConfiguration"), "auditServiceConfiguration bean should not have been found");
+        assertFalse(context.containsBean("auditServiceInstanceProvider"), "auditServiceInstanceProvider bean should not have been found");
+        assertFalse(context.containsBean("auditLookupSecurityMarking"), "auditLookupSecurityMarking bean should not have been found");
+        assertFalse(context.containsBean("lookupService"), "lookupService bean should not have been found");
+        assertFalse(context.containsBean("lookupController"), "lookupController bean should not have been found");
+        assertFalse(context.containsBean("statsController"), "statsController bean should not have been found");
+        assertFalse(context.containsBean("statsService"), "statsService bean should not have been found");
+        assertFalse(context.containsBean("adminController"), "adminController bean should not have been found");
+        assertFalse(context.containsBean("adminService"), "adminService bean should not have been found");
     }
 }
