@@ -12,9 +12,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.List;
 
-//@XmlRootElement(name = "LookupResponse")
-//@XmlAccessorType(XmlAccessType.FIELD)
-//@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+@XmlRootElement(name = "LookupResponse")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class LookupResponse extends BaseResponse {
     
     private static final long serialVersionUID = 1L;

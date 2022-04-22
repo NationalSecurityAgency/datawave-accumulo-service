@@ -9,8 +9,8 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 
-//@XmlAccessorType(XmlAccessType.FIELD)
-//@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class MutationEntry {
     
     @XmlElement
