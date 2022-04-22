@@ -3,6 +3,8 @@ package datawave.microservice.accumulo.stats;
 import datawave.microservice.accumulo.stats.config.StatsConfiguration.JaxbProperties;
 import datawave.microservice.accumulo.stats.util.AccumuloMonitorLocator;
 import datawave.webservice.response.StatsResponse;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.UnmarshallerHandler;
 import org.apache.accumulo.core.client.Instance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +23,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.UnmarshallerHandler;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.StringReader;
 
