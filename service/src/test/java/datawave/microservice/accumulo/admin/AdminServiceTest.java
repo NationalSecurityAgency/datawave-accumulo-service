@@ -259,7 +259,7 @@ public class AdminServiceTest {
     /**
      * Tests the /update endpoint by writing 2 mutations to a new table
      */
-    // @Test //@TODO COME BACK TO ME -- see comment about createUpdateRequest
+    @Test
     public void testUpdate() throws Exception {
         
         // First, create a new table...
@@ -269,8 +269,6 @@ public class AdminServiceTest {
         
         assertTrue(tops.exists(testTable), "Table wasn't created as expected");
         
-        // I don't think createUpdateRequest actually adds the mutations properly, and previous versions of
-        // jackson/jaxb allowed empty mutations to be added or ignored/hid this.
         // Create an UpdateRequest with 2 mutations
         UpdateRequest request = createUpdateRequest(testTable);
         
@@ -357,10 +355,10 @@ public class AdminServiceTest {
         
         mutation.setMutationEntries(mutationEntries);
         
-        tableUpdate.setMutations(Arrays.asList(mutation));
+        tableUpdate.setMutations(Collections.singletonList(mutation));
         
         final UpdateRequest request = new UpdateRequest();
-        request.setTableUpdates(Arrays.asList(tableUpdate));
+        request.setTableUpdates(Collections.singletonList(tableUpdate));
         
         return request;
     }

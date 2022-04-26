@@ -1,14 +1,14 @@
 package datawave.webservice.response.objects;
 
 import datawave.webservice.query.util.StringMapAdapter;
-import jakarta.xml.bind.annotation.XmlAccessOrder;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorOrder;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import javax.xml.bind.annotation.XmlAccessOrder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,9 +51,7 @@ public class Visibility {
             this.markings = new HashMap<String,String>();
         }
         this.markings.clear();
-        if (markings != null) {
-            this.markings.putAll(markings);
-        }
+        this.markings.putAll(markings);
     }
     
 }
