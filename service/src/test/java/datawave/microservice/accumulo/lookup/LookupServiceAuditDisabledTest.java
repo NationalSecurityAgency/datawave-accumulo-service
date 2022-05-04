@@ -110,22 +110,22 @@ public class LookupServiceAuditDisabledTest {
             
             //@formatter:off
             assertEquals(0,
-                response.getEntries().stream().filter(
-                    e -> ((DefaultKey) e.getKey()).getColumnVisibility().contains("B")
-                      || ((DefaultKey) e.getKey()).getColumnVisibility().contains("D")
-                      || ((DefaultKey) e.getKey()).getColumnVisibility().contains("F")
-                      || ((DefaultKey) e.getKey()).getColumnVisibility().contains("H")).count(), "Key(s) having unexpected auth tokens [B,D,F,H] found in response");
+                    response.getEntries().stream().filter(
+                            e -> ((DefaultKey) e.getKey()).getColumnVisibility().contains("B")
+                                    || ((DefaultKey) e.getKey()).getColumnVisibility().contains("D")
+                                    || ((DefaultKey) e.getKey()).getColumnVisibility().contains("F")
+                                    || ((DefaultKey) e.getKey()).getColumnVisibility().contains("H")).count(), "Key(s) having unexpected auth tokens [B,D,F,H] found in response");
 
             assertEquals(5,
-                response.getEntries().stream().filter(e -> e.getKey().getColFam().equals("cf2")).count(), "Key(s) having unexpected column family found in response");
+                    response.getEntries().stream().filter(e -> e.getKey().getColFam().equals("cf2")).count(), "Key(s) having unexpected column family found in response");
 
             assertEquals(0,
-                response.getEntries().stream().filter(
-                    e -> !e.getKey().getColQual().equals("cq1")
-                      && !e.getKey().getColQual().equals("cq3")
-                      && !e.getKey().getColQual().equals("cq5")
-                      && !e.getKey().getColQual().equals("cq7")
-                      && !e.getKey().getColQual().equals("cq9")).count(), "Key(s) having unexpected column qualifier found in response");
+                    response.getEntries().stream().filter(
+                            e -> !e.getKey().getColQual().equals("cq1")
+                                    && !e.getKey().getColQual().equals("cq3")
+                                    && !e.getKey().getColQual().equals("cq5")
+                                    && !e.getKey().getColQual().equals("cq7")
+                                    && !e.getKey().getColQual().equals("cq9")).count(), "Key(s) having unexpected column qualifier found in response");
             //@formatter:on
         }
     }
@@ -135,12 +135,12 @@ public class LookupServiceAuditDisabledTest {
         
         //@formatter:off
         String queryString = String.join("&",
-            "useAuthorizations=B",
-            "columnVisibility=foo",
-            LookupService.Parameter.CF + "=cf2",
-            LookupService.Parameter.CF_ENCODING + "=none",
-            LookupService.Parameter.CQ + "=cq2",
-            LookupService.Parameter.CQ_ENCODING + "=none");
+                "useAuthorizations=B",
+                "columnVisibility=foo",
+                LookupService.Parameter.CF + "=cf2",
+                LookupService.Parameter.CF_ENCODING + "=none",
+                LookupService.Parameter.CQ + "=cq2",
+                LookupService.Parameter.CQ_ENCODING + "=none");
         //@formatter:on
         
         String rowid = "row3";
@@ -153,13 +153,13 @@ public class LookupServiceAuditDisabledTest {
         
         //@formatter:off
         String queryString = String.join("&",
-            "useAuthorizations=B",
-            "columnVisibility=foo",
-            LookupService.Parameter.CF + "=" + Base64.encodeBase64URLSafeString("cf2".getBytes()),
-            LookupService.Parameter.CF_ENCODING + "=base64",
-            LookupService.Parameter.CQ + "=" + Base64.encodeBase64URLSafeString("cq2".getBytes()),
-            LookupService.Parameter.CQ_ENCODING + "=base64",
-            LookupService.Parameter.ROW_ENCODING + "=base64");
+                "useAuthorizations=B",
+                "columnVisibility=foo",
+                LookupService.Parameter.CF + "=" + Base64.encodeBase64URLSafeString("cf2".getBytes()),
+                LookupService.Parameter.CF_ENCODING + "=base64",
+                LookupService.Parameter.CQ + "=" + Base64.encodeBase64URLSafeString("cq2".getBytes()),
+                LookupService.Parameter.CQ_ENCODING + "=base64",
+                LookupService.Parameter.ROW_ENCODING + "=base64");
         //@formatter:on
         
         String rowidBase64 = Base64.encodeBase64URLSafeString("row3".getBytes());
@@ -172,11 +172,11 @@ public class LookupServiceAuditDisabledTest {
         
         //@formatter:off
         String queryString = String.join("&",
-            "useAuthorizations=A,B,C,D,E,F,G,H,I",
-            "columnVisibility=foo",
-            LookupService.Parameter.CF + "=cf2",
-            LookupService.Parameter.BEGIN_ENTRY + "=2",
-            LookupService.Parameter.END_ENTRY + "=5");
+                "useAuthorizations=A,B,C,D,E,F,G,H,I",
+                "columnVisibility=foo",
+                LookupService.Parameter.CF + "=cf2",
+                LookupService.Parameter.BEGIN_ENTRY + "=2",
+                LookupService.Parameter.END_ENTRY + "=5");
         //@formatter:on
         
         String rowid = "row1";
@@ -190,14 +190,14 @@ public class LookupServiceAuditDisabledTest {
     public void testErrorOnBeginGreaterThanEnd() throws Exception {
         //@formatter:off
         String queryString = String.join("&",
-            "useAuthorizations=A,B,C,D,E,F,G,H,I",
-            "columnVisibility=foo",
-            LookupService.Parameter.CF + "=cf2",
-            LookupService.Parameter.BEGIN_ENTRY + "=7",
-            LookupService.Parameter.END_ENTRY + "=5");
+                "useAuthorizations=A,B,C,D,E,F,G,H,I",
+                "columnVisibility=foo",
+                LookupService.Parameter.CF + "=cf2",
+                LookupService.Parameter.BEGIN_ENTRY + "=7",
+                LookupService.Parameter.END_ENTRY + "=5");
         Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
-                    doLookup(defaultUserDetails, path(testTableName + "/row2"), queryString);
-                });
+            doLookup(defaultUserDetails, path(testTableName + "/row2"), queryString);
+        });
         //@formatter:on
     }
     
@@ -206,11 +206,11 @@ public class LookupServiceAuditDisabledTest {
         
         //@formatter:off
         String queryString = String.join("&",
-            "useAuthorizations=A,B,C,D,E,F,G,H,I",
-            "columnVisibility=foo",
-            LookupService.Parameter.CF + "=cf2",
-            LookupService.Parameter.BEGIN_ENTRY + "=3",
-            LookupService.Parameter.END_ENTRY + "=3");
+                "useAuthorizations=A,B,C,D,E,F,G,H,I",
+                "columnVisibility=foo",
+                LookupService.Parameter.CF + "=cf2",
+                LookupService.Parameter.BEGIN_ENTRY + "=3",
+                LookupService.Parameter.END_ENTRY + "=3");
         //@formatter:on
         
         String rowid = "row1";
