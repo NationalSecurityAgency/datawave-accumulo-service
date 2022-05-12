@@ -125,7 +125,7 @@ public class LookupService {
      *            lookup request
      * @param currentUser
      *            user proxy chain associated with the lookup
-     *
+     *            
      * @return datawave.webservice.response.LookupResponse
      * @throws QueryException
      *             on error
