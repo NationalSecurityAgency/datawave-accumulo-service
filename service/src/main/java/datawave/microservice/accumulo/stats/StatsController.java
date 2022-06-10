@@ -1,7 +1,6 @@
 package datawave.microservice.accumulo.stats;
 
 import datawave.webservice.response.StatsResponse;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -9,6 +8,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @Secured({"InternalUser", "Administrator"})
@@ -28,7 +28,7 @@ public class StatsController {
      *
      * @return {@link StatsResponse}
      */
-    @ApiOperation(value = "Retrieves statistics from the Accumulo monitor")
+    @Operation(summary = "Retrieves statistics from the Accumulo monitor")
     @RequestMapping(path = "/stats", method = {RequestMethod.GET})
     public StatsResponse accumuloStats() {
         return statsService.getStats();

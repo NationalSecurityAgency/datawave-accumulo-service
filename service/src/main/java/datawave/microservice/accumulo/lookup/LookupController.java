@@ -1,13 +1,12 @@
 package datawave.microservice.accumulo.lookup;
 
-import datawave.microservice.accumulo.lookup.LookupService.Parameter;
 import datawave.microservice.authorization.user.ProxiedUserDetails;
 import datawave.webservice.query.exception.QueryException;
 import datawave.webservice.response.LookupResponse;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -21,6 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static datawave.microservice.accumulo.lookup.LookupService.ALLOWED_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.BEGIN_ENTRY;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CF;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CF_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CQ;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CQ_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.END_ENTRY;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.ROW_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.USE_AUTHS;
 
 /**
  * REST controller for Accumulo lookup service
@@ -39,34 +46,34 @@ public class LookupController {
     }
     
     //@formatter:off
-    @ApiOperation(value = "Performs an Accumulo table scan using the given parameters")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = Parameter.CF, dataTypeClass = String.class),
-        @ApiImplicitParam(name = Parameter.CQ, dataTypeClass = String.class),
-        @ApiImplicitParam(name = Parameter.BEGIN_ENTRY, dataTypeClass = Integer.class),
-        @ApiImplicitParam(name = Parameter.END_ENTRY, dataTypeClass = Integer.class),
-        @ApiImplicitParam(name = Parameter.USE_AUTHS, dataTypeClass = String.class, example = "A,B,C,D"),
-        @ApiImplicitParam(name = Parameter.ROW_ENCODING, allowableValues = ALLOWED_ENCODING, dataTypeClass = String.class),
-        @ApiImplicitParam(name = Parameter.CF_ENCODING, allowableValues = ALLOWED_ENCODING, dataTypeClass = String.class),
-        @ApiImplicitParam(name = Parameter.CQ_ENCODING, allowableValues = ALLOWED_ENCODING, dataTypeClass = String.class)})
+    @Operation(summary = "Performs an Accumulo table scan using the given parameters")
+    @Parameters({
+        @Parameter(name = CF, schema = @Schema(implementation = String.class)),
+        @Parameter(name = CQ, schema = @Schema(implementation = String.class)),
+        @Parameter(name = BEGIN_ENTRY, schema = @Schema(implementation = Integer.class)),
+        @Parameter(name = END_ENTRY, schema = @Schema(implementation = Integer.class)),
+        @Parameter(name = USE_AUTHS, schema = @Schema(implementation = String.class, example = "A,B,C,D")),
+        @Parameter(name = ROW_ENCODING, schema = @Schema(allowableValues = ALLOWED_ENCODING, implementation = String.class)),
+        @Parameter(name = CF_ENCODING, schema = @Schema(allowableValues = ALLOWED_ENCODING, implementation = String.class)),
+        @Parameter(name = CQ_ENCODING, schema = @Schema(allowableValues = ALLOWED_ENCODING, implementation = String.class))})
     @RequestMapping(path = "/lookup/{table}/{row}", method = {RequestMethod.GET, RequestMethod.POST})
     public LookupResponse lookup(
-        @ApiParam("The Accumulo table to be scanned") @PathVariable String table,
-        @ApiParam("Targeted row within the given table") @PathVariable String row,
+        @Parameter(description = "The Accumulo table to be scanned") @PathVariable String table,
+        @Parameter(description = "Targeted row within the given table") @PathVariable String row,
         @RequestParam MultiValueMap<String,String> queryParameters,
         @AuthenticationPrincipal ProxiedUserDetails currentUser) throws QueryException {
 
         LookupService.LookupRequest request = new LookupService.LookupRequest.Builder()
             .withTable(table)
             .withRow(row)
-            .withRowEnc(queryParameters.getFirst(Parameter.ROW_ENCODING))
-            .withColFam(queryParameters.getFirst(Parameter.CF))
-            .withColFamEnc(queryParameters.getFirst(Parameter.CF_ENCODING))
-            .withColQual(queryParameters.getFirst(Parameter.CQ))
-            .withColQualEnc(queryParameters.getFirst(Parameter.CQ_ENCODING))
-            .withBeginEntry(queryParameters.getFirst(Parameter.BEGIN_ENTRY))
-            .withEndEntry(queryParameters.getFirst(Parameter.END_ENTRY))
-            .withAuths(queryParameters.getFirst(Parameter.USE_AUTHS))
+            .withRowEnc(queryParameters.getFirst(ROW_ENCODING))
+            .withColFam(queryParameters.getFirst(CF))
+            .withColFamEnc(queryParameters.getFirst(CF_ENCODING))
+            .withColQual(queryParameters.getFirst(CQ))
+            .withColQualEnc(queryParameters.getFirst(CQ_ENCODING))
+            .withBeginEntry(queryParameters.getFirst(BEGIN_ENTRY))
+            .withEndEntry(queryParameters.getFirst(END_ENTRY))
+            .withAuths(queryParameters.getFirst(USE_AUTHS))
             .withParameters(queryParameters)
             .build();
 
