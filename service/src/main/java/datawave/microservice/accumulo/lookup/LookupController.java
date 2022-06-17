@@ -3,10 +3,12 @@ package datawave.microservice.accumulo.lookup;
 import datawave.microservice.authorization.user.ProxiedUserDetails;
 import datawave.webservice.query.exception.QueryException;
 import datawave.webservice.response.LookupResponse;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -32,6 +34,9 @@ import static datawave.microservice.accumulo.lookup.LookupService.Parameter.USE_
 /**
  * REST controller for Accumulo lookup service
  */
+@Tag(name = "Lookup Controller /v1", description = "DataWave Lookup Operations",
+                externalDocs = @ExternalDocumentation(description = "Accumulo Service Documentation",
+                                url = "https://github.com/NationalSecurityAgency/datawave-accumulo-service"))
 @RestController
 @ConditionalOnProperty(name = "accumulo.lookup.enabled", havingValue = "true", matchIfMissing = true)
 @Secured({"InternalUser", "Administrator"})

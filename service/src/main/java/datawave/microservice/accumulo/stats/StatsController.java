@@ -1,7 +1,9 @@
 package datawave.microservice.accumulo.stats;
 
 import datawave.webservice.response.StatsResponse;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -10,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Stats Controller /v1", description = "DataWave Stats Operations",
+                externalDocs = @ExternalDocumentation(description = "Accumulo Service Documentation",
+                                url = "https://github.com/NationalSecurityAgency/datawave-accumulo-service"))
 @RestController
 @Secured({"InternalUser", "Administrator"})
 @RequestMapping(path = "/v1", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -26,7 +31,7 @@ public class StatsController {
     /**
      * Retrieves stats from the Accumulo monitor
      *
-     * @return {@link StatsResponse}
+     * @return a StatsResponse
      */
     @Operation(summary = "Retrieves statistics from the Accumulo monitor")
     @RequestMapping(path = "/stats", method = {RequestMethod.GET})
