@@ -1,6 +1,6 @@
 package datawave.webservice.response.objects;
 
-import datawave.webservice.query.util.StringMapAdapter;
+import datawave.webservice.xml.util.StringMapAdapter;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessType;
