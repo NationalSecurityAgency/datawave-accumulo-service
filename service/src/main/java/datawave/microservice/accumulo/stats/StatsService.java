@@ -1,6 +1,5 @@
 package datawave.microservice.accumulo.stats;
 
-import datawave.microservice.accumulo.stats.config.StatsConfiguration.JaxbProperties;
 import datawave.microservice.accumulo.stats.util.AccumuloMonitorLocator;
 import datawave.webservice.response.StatsResponse;
 import org.apache.accumulo.core.client.Instance;
@@ -23,8 +22,10 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.UnmarshallerHandler;
+import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.StringReader;
+import java.lang.annotation.Annotation;
 
 /**
  * This service implements Accumulo stats retrieval by using a {@link RestTemplate} client to fetch the Accumulo monitor's XML response, which is ultimately
@@ -45,18 +46,28 @@ public class StatsService implements InitializingBean {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Instance warehouseInstance;
     private final RestTemplate restTemplate;
-    private final JaxbProperties namespaceProperties;
+    private final String namespace;
     
     @Autowired
     //@formatter:off
     public StatsService(
             @Qualifier("warehouse") Instance warehouseInstance,
-            RestTemplateBuilder restTemplateBuilder,
-            JaxbProperties namespaceProperties) {
+            RestTemplateBuilder restTemplateBuilder) {
         this.warehouseInstance = warehouseInstance;
         this.restTemplate = restTemplateBuilder.build();
-        this.namespaceProperties = namespaceProperties;
+        this.namespace = getNamespace();
         //@formatter:on
+    }
+    
+    private String getNamespace() {
+        String namespace = "";
+        for (Annotation a : StatsResponse.class.getPackage().getAnnotations()) {
+            if (a instanceof XmlSchema) {
+                namespace = ((XmlSchema) a).namespace();
+                break;
+            }
+        }
+        return namespace;
     }
     
     public synchronized void discoverAccumuloMonitor() {
@@ -92,7 +103,7 @@ public class StatsService implements InitializingBean {
             ResponseEntity<String> monitorResponse = restTemplate.exchange(monitorStatsUri, HttpMethod.GET, null, String.class);
             
             if (monitorResponse.getStatusCode().value() == HttpStatus.OK.value()) {
-                NamespaceFilter nsFilter = new NamespaceFilter(this.namespaceProperties.getNamespace());
+                NamespaceFilter nsFilter = new NamespaceFilter(this.namespace);
                 SAXParserFactory spf = SAXParserFactory.newInstance();
                 spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
                 spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
