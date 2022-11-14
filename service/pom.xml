@@ -23,6 +23,7 @@
         <version.microservice.accumulo-api>2.0.1-SNAPSHOT</version.microservice.accumulo-api>
         <version.microservice.starter-datawave>2.0.0</version.microservice.starter-datawave>
         <version.microservice.starter-datawave-audit>2.0.0</version.microservice.starter-datawave-audit>
+        <version.zookeeper>3.4.14</version.zookeeper>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -38,6 +39,10 @@
                     <exclusion>
                         <artifactId>*</artifactId>
                         <groupId>org.slf4j</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>servlet-api</artifactId>
+                        <groupId>javax.servlet</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -62,6 +67,11 @@
                 <version>${version.curator}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${version.zookeeper}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-auth</artifactId>
                 <version>2.6.4</version>
@@ -80,7 +90,7 @@
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.11.0</version>
+                <version>2.12.2</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
