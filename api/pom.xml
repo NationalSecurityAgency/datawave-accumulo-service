@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-parent</artifactId>
-        <version>1.8</version>
+        <version>1.9-SNAPSHOT</version>
         <relativePath />
     </parent>
     <artifactId>accumulo-api</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <scm>
         <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-accumulo-service.git</connection>
@@ -17,9 +17,9 @@
         <url>https://github.com/NationalSecurityAgency/datawave-accumulo-service</url>
     </scm>
     <properties>
-        <version.accumulo>2.0.0</version.accumulo>
-        <version.base-rest-responses>2.0.0</version.base-rest-responses>
-        <version.microservice.accumulo-utils>2.0.0</version.microservice.accumulo-utils>
+        <version.accumulo>2.1.0</version.accumulo>
+        <version.base-rest-responses>2.1.0-SNAPSHOT</version.base-rest-responses>
+        <version.microservice.accumulo-utils>2.1.0</version.microservice.accumulo-utils>
         <version.microservice.type-utils>1.8</version.microservice.type-utils>
     </properties>
     <dependencyManagement>
@@ -28,6 +28,12 @@
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>accumulo-utils</artifactId>
                 <version>${version.microservice.accumulo-utils}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
