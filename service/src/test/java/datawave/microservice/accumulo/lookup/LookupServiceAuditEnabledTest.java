@@ -5,7 +5,7 @@ import datawave.microservice.accumulo.mock.MockAccumuloConfiguration;
 import datawave.microservice.accumulo.mock.MockAccumuloDataService;
 import datawave.microservice.audit.AuditClient;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.common.audit.Auditor;
 import org.apache.accumulo.core.client.Connector;
 import org.junit.jupiter.api.Assertions;
@@ -87,7 +87,7 @@ public class LookupServiceAuditEnabledTest {
     
     private JWTRestTemplate jwtRestTemplate;
     private MockRestServiceServer mockAuditServer;
-    private ProxiedUserDetails defaultUserDetails;
+    private DatawaveUserDetails defaultUserDetails;
     
     @BeforeEach
     public void setup() throws Exception {
@@ -193,7 +193,7 @@ public class LookupServiceAuditEnabledTest {
     @Test
     public void testErrorOnMissingColVizParam() throws Exception {
         // expectedException.expect(new TestHelper.StatusMatcher(400));
-        ProxiedUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A"));
+        DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A"));
         Throwable thrown = Assertions.assertThrows(HttpClientErrorException.class, () -> {
             doLookup(userDetails, path(testTableName + "/row2"), "NotColumnVisibility=foo");
         });
@@ -253,7 +253,7 @@ public class LookupServiceAuditEnabledTest {
     /**
      * Lookups here should return one or more valid Accumulo table entries. If not, an exception is thrown
      */
-    private ResponseEntity<String> doLookup(ProxiedUserDetails authUser, String path, String query) throws Exception {
+    private ResponseEntity<String> doLookup(DatawaveUserDetails authUser, String path, String query) throws Exception {
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path(path).query(query).build();
         ResponseEntity<String> entity = jwtRestTemplate.exchange(authUser, HttpMethod.GET, uri, String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode(), "Lookup request to " + uri + " did not return 200 status");

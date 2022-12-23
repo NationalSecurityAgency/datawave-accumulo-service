@@ -1,6 +1,6 @@
 package datawave.microservice.accumulo.lookup;
 
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.query.exception.QueryException;
 import datawave.webservice.response.LookupResponse;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -66,7 +66,7 @@ public class LookupController {
         @Parameter(description = "The Accumulo table to be scanned") @PathVariable String table,
         @Parameter(description = "Targeted row within the given table") @PathVariable String row,
         @RequestParam MultiValueMap<String,String> queryParameters,
-        @AuthenticationPrincipal ProxiedUserDetails currentUser) throws QueryException {
+        @AuthenticationPrincipal DatawaveUserDetails currentUser) throws QueryException {
 
         LookupService.LookupRequest request = new LookupService.LookupRequest.Builder()
             .withTable(table)

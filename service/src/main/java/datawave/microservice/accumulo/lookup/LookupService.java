@@ -8,7 +8,7 @@ import datawave.microservice.accumulo.lookup.config.LookupAuditProperties;
 import datawave.microservice.accumulo.lookup.config.LookupProperties;
 import datawave.microservice.accumulo.lookup.config.ResponseObjectFactory;
 import datawave.microservice.audit.AuditClient;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.util.ScannerHelper;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.query.exception.BadRequestQueryException;
@@ -130,7 +130,7 @@ public class LookupService {
      * @throws QueryException
      *             on error
      */
-    public LookupResponse lookup(LookupRequest request, ProxiedUserDetails currentUser) throws QueryException {
+    public LookupResponse lookup(LookupRequest request, DatawaveUserDetails currentUser) throws QueryException {
         
         Preconditions.checkNotNull(request, "Request argument cannot be null");
         Preconditions.checkNotNull(currentUser, "User argument cannot be null");
@@ -149,7 +149,7 @@ public class LookupService {
                 .withAuths(request.auths)
                 .withAuditConfig(lookupAuditProperties)
                 .withParams(request.params)
-                .withProxiedUserDetails(currentUser)
+                .withDatawaveUserDetails(currentUser)
                 .withMarking(auditSecurityMarking)
                 .build();
             try {

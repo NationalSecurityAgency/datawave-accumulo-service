@@ -1,7 +1,7 @@
 package datawave.microservice.accumulo;
 
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import org.hamcrest.Description;
@@ -30,11 +30,11 @@ public class TestHelper {
     public static final SubjectIssuerDNPair DEFAULT_USER_DN = SubjectIssuerDNPair.of("userDn", "issuerDn");
     
     private final JWTRestTemplate jwtRestTemplate;
-    private final ProxiedUserDetails defaultUserDetails;
+    private final DatawaveUserDetails defaultUserDetails;
     private final String webServiceBasePath;
     private final int webServicePort;
     
-    public TestHelper(JWTRestTemplate jwtRestTemplate, ProxiedUserDetails defaultUserDetails, int webServicePort, String webServiceBasePath) {
+    public TestHelper(JWTRestTemplate jwtRestTemplate, DatawaveUserDetails defaultUserDetails, int webServicePort, String webServiceBasePath) {
         this.jwtRestTemplate = jwtRestTemplate;
         this.defaultUserDetails = defaultUserDetails;
         this.webServiceBasePath = webServiceBasePath;
@@ -51,7 +51,7 @@ public class TestHelper {
         return createGetRequest(defaultUserDetails, path);
     }
     
-    public RequestEntity<?> createGetRequest(ProxiedUserDetails userDetails, String path) {
+    public RequestEntity<?> createGetRequest(DatawaveUserDetails userDetails, String path) {
         return jwtRestTemplate.createRequestEntity(userDetails, null, null, HttpMethod.GET, getUri(path));
     }
     
@@ -63,15 +63,15 @@ public class TestHelper {
         return createPutRequest(defaultUserDetails, path, requestBody);
     }
     
-    public <T> RequestEntity<T> createPostRequest(ProxiedUserDetails userDetails, String path, T requestBody) {
+    public <T> RequestEntity<T> createPostRequest(DatawaveUserDetails userDetails, String path, T requestBody) {
         return createRequest(userDetails, path, requestBody, HttpMethod.POST);
     }
     
-    public <T> RequestEntity<T> createPutRequest(ProxiedUserDetails userDetails, String path, T requestBody) {
+    public <T> RequestEntity<T> createPutRequest(DatawaveUserDetails userDetails, String path, T requestBody) {
         return createRequest(userDetails, path, requestBody, HttpMethod.PUT);
     }
     
-    public <T> RequestEntity<T> createRequest(ProxiedUserDetails userDetails, String path, T requestBody, HttpMethod method) {
+    public <T> RequestEntity<T> createRequest(DatawaveUserDetails userDetails, String path, T requestBody, HttpMethod method) {
         return jwtRestTemplate.createRequestEntity(userDetails, requestBody, null, method, getUri(path));
     }
     
@@ -86,13 +86,13 @@ public class TestHelper {
         //@formatter:on
     }
     
-    public static ProxiedUserDetails userDetails(Collection<String> assignedRoles, Collection<String> assignedAuths) {
+    public static DatawaveUserDetails userDetails(Collection<String> assignedRoles, Collection<String> assignedAuths) {
         return userDetails(DEFAULT_USER_DN, assignedRoles, assignedAuths);
     }
     
-    public static ProxiedUserDetails userDetails(SubjectIssuerDNPair dn, Collection<String> assignedRoles, Collection<String> assignedAuths) {
+    public static DatawaveUserDetails userDetails(SubjectIssuerDNPair dn, Collection<String> assignedRoles, Collection<String> assignedAuths) {
         DatawaveUser dwUser = new DatawaveUser(dn, USER, assignedAuths, assignedRoles, null, System.currentTimeMillis());
-        return new ProxiedUserDetails(Collections.singleton(dwUser), dwUser.getCreationTime());
+        return new DatawaveUserDetails(Collections.singleton(dwUser), dwUser.getCreationTime());
     }
     
     /**

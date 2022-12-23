@@ -2,7 +2,7 @@ package datawave.microservice.accumulo.admin;
 
 import datawave.microservice.accumulo.TestHelper;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.query.util.OptionallyEncodedString;
 import datawave.webservice.request.UpdateRequest;
 import datawave.webservice.request.objects.Mutation;
@@ -78,7 +78,7 @@ public class AdminServiceTest {
     private Connector warehouseConnector;
     
     private JWTRestTemplate jwtRestTemplate;
-    private ProxiedUserDetails defaultUserDetails;
+    private DatawaveUserDetails defaultUserDetails;
     private String defaultAccumuloUser;
     private TestHelper th;
     
@@ -145,7 +145,7 @@ public class AdminServiceTest {
         assertEquals(1, spl.stream().filter(sp -> sp.getPermission().equals(SystemPermissionType.DROP_TABLE)).count());
     }
     
-    private VoidResponse grantSystemPermission(ProxiedUserDetails userDetails, String accumuloUser, String permission) {
+    private VoidResponse grantSystemPermission(DatawaveUserDetails userDetails, String accumuloUser, String permission) {
         String path = "/grantSystemPermission/" + accumuloUser + "/" + permission;
         return th.assert200Status(th.createPostRequest(userDetails, path, null), VoidResponse.class);
     }
@@ -379,7 +379,7 @@ public class AdminServiceTest {
     @Test
     public void testUnauthorizedDatawaveUser() {
         // Requires Administrator role...
-        ProxiedUserDetails unauthorizedUser = TestHelper.userDetails(Collections.singleton("AuthorizedUser"), null);
+        DatawaveUserDetails unauthorizedUser = TestHelper.userDetails(Collections.singleton("AuthorizedUser"), null);
         try {
             grantSystemPermission(unauthorizedUser, defaultAccumuloUser, SystemPermissionType.CREATE_TABLE.name());
             fail("This test should have thrown HttpClientErrorException with 403 status");

@@ -4,7 +4,7 @@ import datawave.microservice.accumulo.TestHelper;
 import datawave.microservice.accumulo.mock.MockAccumuloConfiguration;
 import datawave.microservice.accumulo.mock.MockAccumuloDataService;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.response.LookupResponse;
 import datawave.webservice.response.objects.DefaultKey;
 import org.apache.commons.codec.binary.Base64;
@@ -69,7 +69,7 @@ public class LookupServiceAuditDisabledTest {
     
     private MultiValueMap<String,String> requestHeaders;
     
-    private ProxiedUserDetails defaultUserDetails;
+    private DatawaveUserDetails defaultUserDetails;
     
     private String testTableName;
     
@@ -243,7 +243,7 @@ public class LookupServiceAuditDisabledTest {
     
     @Test
     public void testErrorOnUserWithInsufficientRoles() throws Exception {
-        ProxiedUserDetails userDetails = TestHelper.userDetails(Arrays.asList("ThisRoleIsNoGood", "IAmRoot"),
+        DatawaveUserDetails userDetails = TestHelper.userDetails(Arrays.asList("ThisRoleIsNoGood", "IAmRoot"),
                         Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I"));
         String queryString = String.join("&", "useAuthorizations=A,C,E,G,I", "columnVisibility=foo");
         Assertions.assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -253,7 +253,7 @@ public class LookupServiceAuditDisabledTest {
     
     @Test
     public void testErrorOnUserWithInsufficientAuths() throws Exception {
-        ProxiedUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "C"));
+        DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "C"));
         String queryString = String.join("&", "useAuthorizations=A,C,E,G,I", "columnVisibility=foo");
         Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
             doLookup(userDetails, path(testTableName + "/row2"), queryString);
@@ -262,7 +262,7 @@ public class LookupServiceAuditDisabledTest {
     
     @Test
     public void testErrorOnTableDoesNotExist() throws Exception {
-        ProxiedUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C"));
+        DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C"));
         String queryString = String.join("&", "useAuthorizations=A,B,C", "columnVisibility=foo");
         Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
             doLookup(userDetails, BASE_PATH + "/THIS_TABLE_DOES_NOT_EXIST/row2", queryString);
@@ -271,7 +271,7 @@ public class LookupServiceAuditDisabledTest {
     
     @Test
     public void testLookupRowDoesNotExist() throws Exception {
-        ProxiedUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C"));
+        DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C"));
         String queryString = String.join("&", "useAuthorizations=A,B,C", "columnVisibility=foo");
         LookupResponse lr = doLookup(userDetails, path(testTableName + "/ThisRowDoesNotExist"), queryString);
         assertEquals(0, lr.getEntries().size(), "Test should have returned response with zero entries");
@@ -280,7 +280,7 @@ public class LookupServiceAuditDisabledTest {
     /**
      * Lookups here should return one or more valid Accumulo table entries. If not, an exception is thrown
      */
-    private LookupResponse doLookup(ProxiedUserDetails authUser, String path, String query) throws Exception {
+    private LookupResponse doLookup(DatawaveUserDetails authUser, String path, String query) throws Exception {
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path(path).query(query).build();
         RequestEntity<?> request = jwtRestTemplate.createRequestEntity(authUser, null, requestHeaders, HttpMethod.GET, uri);
         ResponseEntity<LookupResponse> response = jwtRestTemplate.exchange(request, LookupResponse.class);

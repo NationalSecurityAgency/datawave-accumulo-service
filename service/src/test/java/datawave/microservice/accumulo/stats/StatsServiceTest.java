@@ -3,7 +3,7 @@ package datawave.microservice.accumulo.stats;
 import datawave.accumulo.inmemory.InMemoryInstance;
 import datawave.microservice.accumulo.TestHelper;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.response.StatsResponse;
 import org.apache.accumulo.core.client.Instance;
 import org.apache.curator.framework.CuratorFramework;
@@ -85,7 +85,7 @@ public class StatsServiceTest {
     private StatsService statsService;
     
     private JWTRestTemplate jwtRestTemplate;
-    private ProxiedUserDetails defaultUserDetails;
+    private DatawaveUserDetails defaultUserDetails;
     private MockRestServiceServer mockMonitorServer;
     private TestHelper th;
     
