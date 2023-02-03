@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>accumulo-service-parent</artifactId>
-    <version>1.4</version>
+    <version>1.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <modules>
