@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>accumulo-service-parent</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
     <packaging>pom</packaging>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <modules>
@@ -18,6 +18,7 @@
     <scm>
         <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-accumulo-service.git</connection>
         <developerConnection>scm:git:git@github.com:NationalSecurityAgency/datawave-accumulo-service.git</developerConnection>
+        <tag>1.4</tag>
         <url>https://github.com/NationalSecurityAgency/datawave-accumulo-service</url>
     </scm>
     <repositories>
