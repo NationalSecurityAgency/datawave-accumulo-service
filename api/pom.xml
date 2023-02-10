@@ -19,7 +19,7 @@
         <datawave.webservice.namespace>http://webservice.datawave/v1</datawave.webservice.namespace>
         <version.accumulo>1.10.2</version.accumulo>
         <version.base-rest-responses>1.3-SNAPSHOT</version.base-rest-responses>
-        <version.microservice.accumulo-utils>1.5-SNAPSHOT</version.microservice.accumulo-utils>
+        <version.microservice.accumulo-utils>1.6-SNAPSHOT</version.microservice.accumulo-utils>
         <version.microservice.type-utils>1.13-SNAPSHOT</version.microservice.type-utils>
     </properties>
     <dependencyManagement>
