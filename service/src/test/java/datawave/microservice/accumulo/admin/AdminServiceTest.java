@@ -16,13 +16,13 @@ import datawave.webservice.response.UpdateResponse;
 import datawave.webservice.response.ValidateVisibilityResponse;
 import datawave.webservice.response.objects.SystemPermission;
 import datawave.webservice.response.objects.SystemPermission.SystemPermissionType;
+import datawave.webservice.response.objects.Visibility;
 import datawave.webservice.result.VoidResponse;
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.admin.SecurityOperations;
 import org.apache.accumulo.core.client.admin.TableOperations;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.security.Authorizations;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -75,9 +76,8 @@ public class AdminServiceTest {
     
     @Autowired
     @Qualifier("warehouse")
-    private Connector warehouseConnector;
+    private AccumuloClient warehouseAccumuloClient;
     
-    private JWTRestTemplate jwtRestTemplate;
     private DatawaveUserDetails defaultUserDetails;
     private String defaultAccumuloUser;
     private TestHelper th;
@@ -86,7 +86,7 @@ public class AdminServiceTest {
     public void setup() {
         // REST api user must have Administrator role
         defaultUserDetails = TestHelper.userDetails(Collections.singleton("Administrator"), null);
-        jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
+        JWTRestTemplate jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
         defaultAccumuloUser = "root";
         
         th = new TestHelper(jwtRestTemplate, defaultUserDetails, webServicePort, "/accumulo/v1/admin");
@@ -179,7 +179,7 @@ public class AdminServiceTest {
         
         // Create a new Accumulo user and assign some auths
         String testUser = "testListUserAuthorizations";
-        SecurityOperations so = warehouseConnector.securityOperations();
+        SecurityOperations so = warehouseAccumuloClient.securityOperations();
         so.createLocalUser(testUser, new PasswordToken("test"));
         so.changeUserAuthorizations(testUser, new Authorizations("A", "B", "C", "D", "E", "F"));
         
@@ -228,7 +228,7 @@ public class AdminServiceTest {
     @Test
     public void testSetAndRemoveTableProperties() throws Exception {
         final String testTable = "testSetTableProperty";
-        warehouseConnector.tableOperations().create(testTable);
+        warehouseAccumuloClient.tableOperations().create(testTable);
         
         final String propKey = "datawave.test.foo";
         final String propVal = "testValue";
@@ -237,7 +237,7 @@ public class AdminServiceTest {
         String path = String.format("/setTableProperty/%s/%s/%s", testTable, propKey, propVal);
         th.assert200Status(th.createPostRequest(path, null), VoidResponse.class);
         
-        Iterable<Map.Entry<String,String>> props = warehouseConnector.tableOperations().getProperties(testTable);
+        Iterable<Map.Entry<String,String>> props = warehouseAccumuloClient.tableOperations().getProperties(testTable);
         
         //@formatter:off
         assertEquals(1, StreamSupport.stream(props.spliterator(), false).
@@ -248,7 +248,7 @@ public class AdminServiceTest {
         path = String.format("/removeTableProperty/%s/%s", testTable, propKey);
         th.assert200Status(th.createPostRequest(path, null), VoidResponse.class);
         
-        props = warehouseConnector.tableOperations().getProperties(testTable);
+        props = warehouseAccumuloClient.tableOperations().getProperties(testTable);
         
         //@formatter:off
         assertEquals(0, StreamSupport.stream(props.spliterator(), false).
@@ -264,7 +264,7 @@ public class AdminServiceTest {
         
         // First, create a new table...
         final String testTable = "testUpdateTable";
-        TableOperations tops = warehouseConnector.tableOperations();
+        TableOperations tops = warehouseAccumuloClient.tableOperations();
         tops.create(testTable);
         
         assertTrue(tops.exists(testTable), "Table wasn't created as expected");
@@ -300,10 +300,9 @@ public class AdminServiceTest {
         
         //@formatter:off
         assertNotNull(response);
-        assertEquals(
-                4, response.getVisibilityList().size(), "There should have been 4 visibilities in the response");
-        assertEquals(
-                3, response.getVisibilityList().stream().filter(v -> v.getValid()).count(), "There should have been 3 valid visibilities in the response");
+        assertEquals(4, response.getVisibilityList().size(), "There should have been 4 visibilities in the response");
+        assertEquals(3, response.getVisibilityList().stream().filter(Visibility::getValid).count(),
+                "There should have been 3 valid visibilities in the response");
         //@formatter:on
     }
     
@@ -368,9 +367,8 @@ public class AdminServiceTest {
      */
     @Test
     public void testUnknownAccumuloUser() {
-        Assertions.assertThrows(HttpServerErrorException.class, () -> {
-            grantSystemPermission(defaultUserDetails, "thisuserdoesnotexist", SystemPermissionType.CREATE_TABLE.name());
-        });
+        assertThrows(HttpServerErrorException.class,
+                        () -> grantSystemPermission(defaultUserDetails, "thisuserdoesnotexist", SystemPermissionType.CREATE_TABLE.name()));
     }
     
     /**

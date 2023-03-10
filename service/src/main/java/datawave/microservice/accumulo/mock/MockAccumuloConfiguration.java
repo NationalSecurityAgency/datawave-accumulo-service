@@ -1,12 +1,11 @@
 package datawave.microservice.accumulo.mock;
 
+import datawave.accumulo.inmemory.InMemoryAccumuloClient;
 import datawave.accumulo.inmemory.InMemoryInstance;
 import datawave.microservice.config.accumulo.AccumuloProperties;
-import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.Instance;
-import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,14 +26,7 @@ public class MockAccumuloConfiguration {
     
     @Bean
     @Qualifier("warehouse")
-    //@formatter:off
-    public Connector warehouseConnector(
-        @Qualifier("warehouse") AccumuloProperties warehouseProperties,
-        @Qualifier("warehouse") Instance warehouseInstance) throws AccumuloSecurityException, AccumuloException {
-        Connector connector = warehouseInstance.getConnector(
-            warehouseProperties.getUsername(),
-            new PasswordToken(warehouseProperties.getPassword()));
-        return connector;
+    public AccumuloClient warehouseClient(@Qualifier("warehouse") AccumuloProperties warehouseProperties) throws AccumuloSecurityException {
+        return new InMemoryAccumuloClient(warehouseProperties.getUsername(), new InMemoryInstance(warehouseProperties.getInstanceName()));
     }
-    //@formatter:on
 }

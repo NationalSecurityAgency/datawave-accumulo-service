@@ -1,6 +1,6 @@
 package datawave.microservice.accumulo.stats.util;
 
-import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+import static org.apache.accumulo.core.conf.ClientProperty.INSTANCE_ZOOKEEPERS;
 
 /**
  * Utility to fetch the location (host:port) of the Accumulo monitor application.
@@ -35,14 +38,15 @@ public class AccumuloMonitorLocator {
     /**
      * Fetches the 'host:port' for the Accumulo monitor from the zookeeper used by the given instance.
      *
-     * @param instance
-     *            the zookeeper instance to use for retrieving the monitor host:port
+     * @param accumuloClient
+     *            the AccumuloClient to use for retrieving the monitor host:port
      * @return the monitor host:port, or null if not found
      */
-    public String getHostPort(Instance instance) {
-        try (CuratorFramework curator = CuratorFrameworkFactory.newClient(instance.getZooKeepers(), retryPolicy)) {
+    public String getHostPort(AccumuloClient accumuloClient) {
+        Properties clientProps = accumuloClient.properties();
+        try (CuratorFramework curator = CuratorFrameworkFactory.newClient(clientProps.getProperty(INSTANCE_ZOOKEEPERS.getKey()), retryPolicy)) {
             curator.start();
-            byte[] bytes = curator.getData().forPath(String.format(MONITOR_HTTP_ADDR, instance.getInstanceID()));
+            byte[] bytes = curator.getData().forPath(String.format(MONITOR_HTTP_ADDR, accumuloClient.instanceOperations().getInstanceID()));
             return new String(bytes, ENCODING);
         } catch (Exception e) {
             LOGGER.error("Cloud not fetch Accumulo monitor URL from zookeeper", e);

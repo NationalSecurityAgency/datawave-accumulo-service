@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "spring.main.allow-bean-definition-overriding=true")
@@ -23,7 +23,7 @@ public class AllServicesDisabledTest {
     
     @Test
     public void verifyAutoConfig() {
-        assertTrue("accumuloService bean should have been found", context.containsBean("accumuloService"));
+        assertTrue(context.containsBean("accumuloService"), "accumuloService bean should have been found");
         assertFalse(context.containsBean("auditServiceConfiguration"), "auditServiceConfiguration bean should not have been found");
         assertFalse(context.containsBean("auditServiceInstanceProvider"), "auditServiceInstanceProvider bean should not have been found");
         assertFalse(context.containsBean("auditLookupSecurityMarking"), "auditLookupSecurityMarking bean should not have been found");

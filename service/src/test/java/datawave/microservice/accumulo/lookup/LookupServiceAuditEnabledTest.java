@@ -7,8 +7,7 @@ import datawave.microservice.audit.AuditClient;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
 import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.common.audit.Auditor;
-import org.apache.accumulo.core.client.Connector;
-import org.junit.jupiter.api.Assertions;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,8 +35,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static datawave.microservice.accumulo.TestHelper.assertExceptionMessage;
+import static datawave.microservice.accumulo.TestHelper.assertHttpException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
@@ -69,7 +71,7 @@ public class LookupServiceAuditEnabledTest {
     
     @Autowired
     @Qualifier("warehouse")
-    private Connector connector;
+    private AccumuloClient connector;
     
     @Autowired
     private MockAccumuloDataService mockDataService;
@@ -90,7 +92,7 @@ public class LookupServiceAuditEnabledTest {
     private DatawaveUserDetails defaultUserDetails;
     
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         defaultUserDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I"));
         jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
         testTableName = MockAccumuloDataService.WAREHOUSE_MOCK_TABLE;
@@ -112,17 +114,17 @@ public class LookupServiceAuditEnabledTest {
     }
     
     @Test
-    public void testLookupRow1AndVerifyAuditURI() throws Exception {
+    public void testLookupRow1AndVerifyAuditURI() {
         testLookupAndVerifyAuditUriWithSuccess(testTableName, "row1", Auditor.AuditType.ACTIVE);
     }
     
     @Test
-    public void testLookupRow2AndVerifyAuditURI() throws Exception {
+    public void testLookupRow2AndVerifyAuditURI() {
         testLookupAndVerifyAuditUriWithSuccess(testTableName, "row2", Auditor.AuditType.PASSIVE);
     }
     
     @Test
-    public void testLookupRow3AndVerifyAuditURI() throws Exception {
+    public void testLookupRow3AndVerifyAuditURI() {
         testLookupAndVerifyAuditUriWithSuccess(testTableName, "row3", Auditor.AuditType.ACTIVE);
     }
     
@@ -141,10 +143,8 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule1");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class, () -> {
-            testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule1", "row3", Auditor.AuditType.ACTIVE);
-        });
-        assertTrue(thrown.getMessage().contains("0 request(s) executed"));
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
+                        () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule1", "row3", Auditor.AuditType.ACTIVE));
     }
     
     /**
@@ -156,9 +156,8 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule2");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class,
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
                         () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule2", "row3", Auditor.AuditType.PASSIVE));
-        assertTrue(thrown.getMessage().contains("0 request(s) executed"));
     }
     
     /**
@@ -170,10 +169,8 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule3");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class,
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
                         () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule3", "row3", Auditor.AuditType.NONE));
-        assertTrue(thrown.getMessage().contains("0 request(s) executed"));
-        
     }
     
     /**
@@ -185,21 +182,17 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule4");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class,
+        assertExceptionMessage(AssertionError.class, "\n0 request(s) executed",
                         () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule4", "row3", Auditor.AuditType.LOCALONLY));
-        assertTrue(thrown.getMessage().contains("0 request(s) executed"));
     }
     
     @Test
-    public void testErrorOnMissingColVizParam() throws Exception {
-        // expectedException.expect(new TestHelper.StatusMatcher(400));
-        DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A"));
-        Throwable thrown = Assertions.assertThrows(HttpClientErrorException.class, () -> {
-            doLookup(userDetails, path(testTableName + "/row2"), "NotColumnVisibility=foo");
-        });
+    public void testErrorOnMissingColVizParam() {
+        DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Collections.singletonList("A"));
+        assertHttpException(HttpClientErrorException.class, 400, () -> doLookup(userDetails, path(testTableName + "/row2"), "NotColumnVisibility=foo"));
     }
     
-    private void testLookupAndVerifyAuditUriWithSuccess(String targetTable, String targetRow, Auditor.AuditType expectedAuditType) throws Exception {
+    private void testLookupAndVerifyAuditUriWithSuccess(String targetTable, String targetRow, Auditor.AuditType expectedAuditType) {
         
         String auditColViz = "foo";
         String queryAuths = "A,C,E,G,I";
@@ -239,24 +232,19 @@ public class LookupServiceAuditEnabledTest {
     private void setupMockAuditServer() {
         // Here we're mocking the jwtRestTemplate field within the AuditClient instance
         // owned by our lookupService, i.e., lookupService.auditor.jwtRestTemplate
-        //@formatter:off
-        RestTemplate auditorRestTemplate = (RestTemplate)
-            new DirectFieldAccessor(
-                new DirectFieldAccessor(
-                    lookupService
-                ).getPropertyValue("auditor")
-            ).getPropertyValue("jwtRestTemplate");
-        //@formatter:on
+        Object auditor = new DirectFieldAccessor(lookupService).getPropertyValue("auditor");
+        assertNotNull(auditor);
+        RestTemplate auditorRestTemplate = (RestTemplate) new DirectFieldAccessor(auditor).getPropertyValue("jwtRestTemplate");
+        assertNotNull(auditorRestTemplate);
         mockAuditServer = MockRestServiceServer.createServer(auditorRestTemplate);
     }
     
     /**
      * Lookups here should return one or more valid Accumulo table entries. If not, an exception is thrown
      */
-    private ResponseEntity<String> doLookup(DatawaveUserDetails authUser, String path, String query) throws Exception {
+    private void doLookup(DatawaveUserDetails authUser, String path, String query) {
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path(path).query(query).build();
         ResponseEntity<String> entity = jwtRestTemplate.exchange(authUser, HttpMethod.GET, uri, String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode(), "Lookup request to " + uri + " did not return 200 status");
-        return entity;
     }
 }

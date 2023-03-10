@@ -8,7 +8,6 @@ import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.response.LookupResponse;
 import datawave.webservice.response.objects.DefaultKey;
 import org.apache.commons.codec.binary.Base64;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,11 +31,15 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.xml.bind.JAXB;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static datawave.microservice.accumulo.TestHelper.assertHttpException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -74,7 +77,7 @@ public class LookupServiceAuditDisabledTest {
     private String testTableName;
     
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         requestHeaders = new LinkedMultiValueMap<>();
         requestHeaders.add("Accept", MediaType.APPLICATION_XML_VALUE);
         defaultUserDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I"));
@@ -98,7 +101,7 @@ public class LookupServiceAuditDisabledTest {
     }
     
     @Test
-    public void testLookupAllRowsAndVerifyResults() throws Exception {
+    public void testLookupAllRowsAndVerifyResults() {
         
         String queryString = String.join("&", "useAuthorizations=A,C,E,G,I", "columnVisibility=foo");
         
@@ -113,10 +116,11 @@ public class LookupServiceAuditDisabledTest {
                     e -> ((DefaultKey) e.getKey()).getColumnVisibility().contains("B")
                       || ((DefaultKey) e.getKey()).getColumnVisibility().contains("D")
                       || ((DefaultKey) e.getKey()).getColumnVisibility().contains("F")
-                      || ((DefaultKey) e.getKey()).getColumnVisibility().contains("H")).count(), "Key(s) having unexpected auth tokens [B,D,F,H] found in response");
+                      || ((DefaultKey) e.getKey()).getColumnVisibility().contains("H")).count(),
+                    "Key(s) having unexpected auth tokens [B,D,F,H] found in response");
 
-            assertEquals(5,
-                response.getEntries().stream().filter(e -> e.getKey().getColFam().equals("cf2")).count(), "Key(s) having unexpected column family found in response");
+            assertEquals(5, response.getEntries().stream().filter(e -> e.getKey().getColFam().equals("cf2")).count(),
+                    "Key(s) having unexpected column family found in response");
 
             assertEquals(0,
                 response.getEntries().stream().filter(
@@ -124,13 +128,14 @@ public class LookupServiceAuditDisabledTest {
                       && !e.getKey().getColQual().equals("cq3")
                       && !e.getKey().getColQual().equals("cq5")
                       && !e.getKey().getColQual().equals("cq7")
-                      && !e.getKey().getColQual().equals("cq9")).count(), "Key(s) having unexpected column qualifier found in response");
+                      && !e.getKey().getColQual().equals("cq9")).count(),
+                    "Key(s) having unexpected column qualifier found in response");
             //@formatter:on
         }
     }
     
     @Test
-    public void testLookupWithColFamAndColQual() throws Exception {
+    public void testLookupWithColFamAndColQual() {
         
         //@formatter:off
         String queryString = String.join("&",
@@ -148,7 +153,7 @@ public class LookupServiceAuditDisabledTest {
     }
     
     @Test
-    public void testLookupWithBase64Params() throws Exception {
+    public void testLookupWithBase64Params() {
         
         //@formatter:off
         String queryString = String.join("&",
@@ -167,7 +172,7 @@ public class LookupServiceAuditDisabledTest {
     }
     
     @Test
-    public void testLookupBeginEndSubset() throws Exception {
+    public void testLookupBeginEndSubset() {
         
         //@formatter:off
         String queryString = String.join("&",
@@ -182,11 +187,11 @@ public class LookupServiceAuditDisabledTest {
         LookupResponse response = doLookup(defaultUserDetails, path(testTableName + "/" + rowid), queryString);
         assertEquals(4, response.getEntries().size(), "Lookup should have returned 4 entries");
         assertEquals("cq3", response.getEntries().get(0).getKey().getColQual(), "First result should be cq3");
-        assertTrue(response.getEntries().get(3).getKey().getColQual().equals("cq6"), "Last result should be cq6");
+        assertEquals("cq6", response.getEntries().get(3).getKey().getColQual(), "Last result should be cq6");
     }
     
     @Test
-    public void testErrorOnBeginGreaterThanEnd() throws Exception {
+    public void testErrorOnBeginGreaterThanEnd() {
         //@formatter:off
         String queryString = String.join("&",
             "useAuthorizations=A,B,C,D,E,F,G,H,I",
@@ -194,14 +199,13 @@ public class LookupServiceAuditDisabledTest {
             LookupService.Parameter.CF + "=cf2",
             LookupService.Parameter.BEGIN_ENTRY + "=7",
             LookupService.Parameter.END_ENTRY + "=5");
-        Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
-                    doLookup(defaultUserDetails, path(testTableName + "/row2"), queryString);
-                });
+        assertHttpException(HttpServerErrorException.class, 500,
+                () -> doLookup(defaultUserDetails, path(testTableName + "/row2"), queryString));
         //@formatter:on
     }
     
     @Test
-    public void testLookupWithBeginEqualToEnd() throws Exception {
+    public void testLookupWithBeginEqualToEnd() {
         
         //@formatter:off
         String queryString = String.join("&",
@@ -215,11 +219,11 @@ public class LookupServiceAuditDisabledTest {
         String rowid = "row1";
         LookupResponse response = doLookup(defaultUserDetails, path(testTableName + "/" + rowid), queryString);
         assertEquals(1, response.getEntries().size(), "Lookup should have matched 1 entry");
-        assertEquals("cq4", ((DefaultKey) (response.getEntries().get(0).getKey())).getColQual(), "Result should be cq4");
+        assertEquals("cq4", response.getEntries().get(0).getKey().getColQual(), "Result should be cq4");
     }
     
     @Test
-    public void testLookupWithAllAssignedAuths() throws Exception {
+    public void testLookupWithAllAssignedAuths() {
         
         LookupResponse lookupResponse;
         
@@ -242,35 +246,30 @@ public class LookupServiceAuditDisabledTest {
     }
     
     @Test
-    public void testErrorOnUserWithInsufficientRoles() throws Exception {
+    public void testErrorOnUserWithInsufficientRoles() {
         DatawaveUserDetails userDetails = TestHelper.userDetails(Arrays.asList("ThisRoleIsNoGood", "IAmRoot"),
                         Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I"));
         String queryString = String.join("&", "useAuthorizations=A,C,E,G,I", "columnVisibility=foo");
-        Assertions.assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-            doLookup(userDetails, path(testTableName + "/row1"), queryString);
-        });
+        assertHttpException(HttpClientErrorException.class, 403, () -> doLookup(userDetails, path(testTableName + "/row1"), queryString));
     }
     
     @Test
-    public void testErrorOnUserWithInsufficientAuths() throws Exception {
+    public void testErrorOnUserWithInsufficientAuths() {
         DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "C"));
         String queryString = String.join("&", "useAuthorizations=A,C,E,G,I", "columnVisibility=foo");
-        Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
-            doLookup(userDetails, path(testTableName + "/row2"), queryString);
-        });
+        assertHttpException(HttpServerErrorException.class, 500, () -> doLookup(userDetails, path(testTableName + "/row2"), queryString));
     }
     
     @Test
-    public void testErrorOnTableDoesNotExist() throws Exception {
+    public void testErrorOnTableDoesNotExist() {
         DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C"));
         String queryString = String.join("&", "useAuthorizations=A,B,C", "columnVisibility=foo");
-        Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
-            doLookup(userDetails, BASE_PATH + "/THIS_TABLE_DOES_NOT_EXIST/row2", queryString);
-        });
+        
+        assertHttpException(HttpServerErrorException.class, 500, () -> doLookup(userDetails, BASE_PATH + "/THIS_TABLE_DOES_NOT_EXIST/row2", queryString));
     }
     
     @Test
-    public void testLookupRowDoesNotExist() throws Exception {
+    public void testLookupRowDoesNotExist() {
         DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C"));
         String queryString = String.join("&", "useAuthorizations=A,B,C", "columnVisibility=foo");
         LookupResponse lr = doLookup(userDetails, path(testTableName + "/ThisRowDoesNotExist"), queryString);
@@ -280,12 +279,13 @@ public class LookupServiceAuditDisabledTest {
     /**
      * Lookups here should return one or more valid Accumulo table entries. If not, an exception is thrown
      */
-    private LookupResponse doLookup(DatawaveUserDetails authUser, String path, String query) throws Exception {
+    private LookupResponse doLookup(DatawaveUserDetails authUser, String path, String query) {
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path(path).query(query).build();
         RequestEntity<?> request = jwtRestTemplate.createRequestEntity(authUser, null, requestHeaders, HttpMethod.GET, uri);
-        ResponseEntity<LookupResponse> response = jwtRestTemplate.exchange(request, LookupResponse.class);
+        ResponseEntity<String> response = jwtRestTemplate.exchange(request, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Lookup request to " + uri + " did not return 200 status");
-        return response.getBody();
+        assertNotNull(response.getBody());
+        return JAXB.unmarshal(new StringReader(response.getBody()), LookupResponse.class);
     }
     
     private String path(String pathParams) {

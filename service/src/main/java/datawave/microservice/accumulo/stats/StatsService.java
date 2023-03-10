@@ -2,7 +2,7 @@ package datawave.microservice.accumulo.stats;
 
 import datawave.microservice.accumulo.stats.util.AccumuloMonitorLocator;
 import datawave.webservice.response.StatsResponse;
-import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,16 +44,16 @@ public class StatsService implements InitializingBean {
     private String monitorStatsUri = null;
     
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final Instance warehouseInstance;
+    private final AccumuloClient warehouseClient;
     private final RestTemplate restTemplate;
     private final String namespace;
     
     @Autowired
     //@formatter:off
     public StatsService(
-            @Qualifier("warehouse") Instance warehouseInstance,
+            @Qualifier("warehouse") AccumuloClient warehouseClient,
             RestTemplateBuilder restTemplateBuilder) {
-        this.warehouseInstance = warehouseInstance;
+        this.warehouseClient = warehouseClient;
         this.restTemplate = restTemplateBuilder.build();
         this.namespace = getNamespace();
         //@formatter:on
@@ -72,7 +72,7 @@ public class StatsService implements InitializingBean {
     
     public synchronized void discoverAccumuloMonitor() {
         try {
-            monitorStatsUri = String.format(MONITOR_STATS_URI, new AccumuloMonitorLocator().getHostPort(warehouseInstance));
+            monitorStatsUri = String.format(MONITOR_STATS_URI, new AccumuloMonitorLocator().getHostPort(warehouseClient));
         } catch (Exception e) {
             log.error("Failed to discover Accumulo monitor location", e);
         }

@@ -2,9 +2,10 @@ package datawave.microservice.accumulo.mock;
 
 import com.google.common.base.Preconditions;
 import datawave.microservice.accumulo.lookup.LookupService;
+import java.util.concurrent.TimeUnit;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.ColumnVisibility;
@@ -14,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * When the <strong>mock</strong> profile is activated, this bean will automatically ingest a tiny amount of data into an in-memory accumulo instance. The
@@ -31,11 +30,11 @@ public class MockAccumuloDataService {
     
     public static final String WAREHOUSE_MOCK_TABLE = "warehouseTestTable";
     
-    private final Connector warehouseConnector;
+    private final AccumuloClient warehouseAccumuloClient;
     
     @Autowired
-    public MockAccumuloDataService(@Qualifier("warehouse") Connector warehouseConnector) {
-        this.warehouseConnector = warehouseConnector;
+    public MockAccumuloDataService(@Qualifier("warehouse") AccumuloClient warehouseAccumuloClient) {
+        this.warehouseAccumuloClient = warehouseAccumuloClient;
         setupMockWarehouseTables();
     }
     
@@ -44,8 +43,8 @@ public class MockAccumuloDataService {
      */
     private void setupMockWarehouseTables() {
         try {
-            setupMockTable(getWarehouseConnector(), WAREHOUSE_MOCK_TABLE);
-            setupMockTable(getWarehouseConnector(), WAREHOUSE_MOCK_TABLE + 2);
+            setupMockTable(getWarehouseAccumuloClient(), WAREHOUSE_MOCK_TABLE);
+            setupMockTable(getWarehouseAccumuloClient(), WAREHOUSE_MOCK_TABLE + 2);
         } catch (Exception e) {
             log.error("Mock warehouse table setup failed", e);
             throw new RuntimeException(e);
@@ -56,23 +55,23 @@ public class MockAccumuloDataService {
      * Initializes a new table having the specified name with a static dataset for testing. Note that the data here is coupled to audit settings in
      * test/resources/config/application.yml, and coupled to assertions for many unit tests
      *
-     * @param connector
-     *            Accumulo connector
+     * @param accumuloClient
+     *            Client to use for accessing Accumulo
      * @param tableName
      *            Accumulo table name
      * @throws Exception
      *             on error
      */
-    public void setupMockTable(Connector connector, String tableName) throws Exception {
-        if (connector.tableOperations().exists(tableName))
-            connector.tableOperations().delete(tableName);
+    public void setupMockTable(AccumuloClient accumuloClient, String tableName) throws Exception {
+        if (accumuloClient.tableOperations().exists(tableName))
+            accumuloClient.tableOperations().delete(tableName);
         
-        Preconditions.checkState(!connector.tableOperations().exists(tableName), tableName + " already exists");
+        Preconditions.checkState(!accumuloClient.tableOperations().exists(tableName), tableName + " already exists");
         
-        connector.tableOperations().create(tableName);
+        accumuloClient.tableOperations().create(tableName);
         
         BatchWriterConfig bwc = new BatchWriterConfig().setMaxLatency(1l, TimeUnit.SECONDS).setMaxMemory(1024l).setMaxWriteThreads(1);
-        try (BatchWriter bw = connector.createBatchWriter(tableName, bwc)) {
+        try (BatchWriter bw = accumuloClient.createBatchWriter(tableName, bwc)) {
             // Write 3 rows to the test table
             for (int i = 1; i < 4; i++) {
                 Mutation m = new Mutation("row" + i);
@@ -93,7 +92,7 @@ public class MockAccumuloDataService {
         }
     }
     
-    public Connector getWarehouseConnector() {
-        return this.warehouseConnector;
+    public AccumuloClient getWarehouseAccumuloClient() {
+        return this.warehouseAccumuloClient;
     }
 }

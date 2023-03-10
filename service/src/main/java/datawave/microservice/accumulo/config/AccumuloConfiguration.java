@@ -6,8 +6,6 @@ import datawave.microservice.accumulo.config.AccumuloConfiguration.MetricsCluste
 import datawave.microservice.accumulo.config.AccumuloConfiguration.WarehouseClusterProperties;
 import datawave.microservice.config.accumulo.AccumuloProperties;
 import datawave.microservice.config.cluster.ClusterProperties;
-import org.apache.accumulo.core.client.Connector;
-import org.apache.accumulo.core.client.Instance;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,26 +28,10 @@ public class AccumuloConfiguration {
     
     @Bean
     @Lazy
-    @Qualifier("warehouse")
-    @ConditionalOnMissingBean
-    public Instance warehouseInstance(@Qualifier("warehouse") Connector warehouseConnector) {
-        return warehouseConnector.getInstance();
-    }
-    
-    @Bean
-    @Lazy
     @Qualifier("metrics")
     @ConditionalOnMissingBean
     public AccumuloProperties metricsAccumuloProperies(MetricsClusterProperties metricsProperties) {
         return metricsProperties.getAccumulo();
-    }
-    
-    @Bean
-    @Lazy
-    @Qualifier("metrics")
-    @ConditionalOnMissingBean
-    public Instance metricsInstance(@Qualifier("metrics") Connector metricsConnector) {
-        return metricsConnector.getInstance();
     }
     
     @Bean

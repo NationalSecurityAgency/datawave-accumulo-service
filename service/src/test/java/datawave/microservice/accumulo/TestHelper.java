@@ -4,14 +4,11 @@ import datawave.microservice.authorization.jwt.JWTRestTemplate;
 import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,7 +17,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static datawave.security.authorization.DatawaveUser.UserType.USER;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Utility class for simplifying most of the typical REST API test functions
@@ -95,29 +96,13 @@ public class TestHelper {
         return new DatawaveUserDetails(Collections.singleton(dwUser), dwUser.getCreationTime());
     }
     
-    /**
-     * Matcher that can be used for both {@link HttpClientErrorException} and {@link HttpServerErrorException}
-     */
-    public static class StatusMatcher extends TypeSafeMatcher<HttpStatusCodeException> {
-        private int status;
-        
-        public StatusMatcher(int status) {
-            this.status = status;
-        }
-        
-        @Override
-        protected boolean matchesSafely(HttpStatusCodeException e) {
-            return e.getStatusCode().value() == status;
-        }
-        
-        @Override
-        public void describeTo(Description description) {
-            description.appendText("expects status code ").appendValue(status);
-        }
-        
-        @Override
-        protected void describeMismatchSafely(HttpStatusCodeException e, Description mismatchDescription) {
-            mismatchDescription.appendText("was ").appendValue(e.getStatusCode().value());
-        }
+    public static <T extends HttpStatusCodeException> void assertHttpException(Class<T> exceptionClass, int statusCode, Executable executable) {
+        HttpStatusCodeException thrown = assertThrows(exceptionClass, executable);
+        assertThat("Unexpected HTTP status code", thrown.getRawStatusCode(), equalTo(statusCode));
+    }
+    
+    public static <T extends Throwable> void assertExceptionMessage(Class<T> exceptionClass, String message, Executable executable) {
+        T thrown = assertThrows(exceptionClass, executable);
+        assertThat(thrown.getMessage(), containsString(message));
     }
 }

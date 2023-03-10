@@ -17,7 +17,7 @@ public class TablePermission implements Serializable {
     private static final long serialVersionUID = 1L;
     
     public enum TablePermissionType {
-        READ, WRITE, BULK_IMPORT, ALTER_TABLE, GRANT, DROP_TABLE
+        READ, WRITE, BULK_IMPORT, ALTER_TABLE, GRANT, DROP_TABLE, GET_SUMMARIES
     };
     
     @XmlAttribute

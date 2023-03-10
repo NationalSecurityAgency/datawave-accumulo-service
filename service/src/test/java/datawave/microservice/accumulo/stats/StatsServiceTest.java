@@ -1,11 +1,13 @@
 package datawave.microservice.accumulo.stats;
 
+import datawave.accumulo.inmemory.InMemoryAccumuloClient;
 import datawave.accumulo.inmemory.InMemoryInstance;
 import datawave.microservice.accumulo.TestHelper;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
 import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.webservice.response.StatsResponse;
-import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.AccumuloClient;
+import org.apache.accumulo.core.conf.ClientProperty;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
@@ -36,6 +38,7 @@ import org.springframework.web.client.RestTemplate;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -175,11 +178,13 @@ public class StatsServiceTest {
          */
         @Bean
         @Qualifier("warehouse")
-        public Instance warehouseInstance() throws Exception {
-            final Instance instance = new InMemoryInstance() {
+        public AccumuloClient warehouseClient() throws Exception {
+            Properties testProperties = new Properties();
+            testProperties.setProperty(ClientProperty.INSTANCE_ZOOKEEPERS.getKey(), String.format("localhost:%d", ZK_PORT));
+            final AccumuloClient accumuloClient = new InMemoryAccumuloClient("root", new InMemoryInstance("testInstance")) {
                 @Override
-                public String getZooKeepers() {
-                    return String.format("localhost:%d", ZK_PORT);
+                public Properties properties() {
+                    return testProperties;
                 }
             };
             //@formatter:off
@@ -187,11 +192,11 @@ public class StatsServiceTest {
                     String.format("localhost:%d", ZK_PORT), new RetryOneTime(500))) {
                 curator.start();
                 curator.create().creatingParentContainersIfNeeded()
-                    .forPath(String.format(ZK_MONITOR_PATH, instance.getInstanceID()), ZK_MONITOR_DATA.getBytes());
+                    .forPath(String.format(ZK_MONITOR_PATH, accumuloClient.instanceOperations().getInstanceID()), ZK_MONITOR_DATA.getBytes());
             }
             //@formatter:on
             
-            return instance;
+            return accumuloClient;
         }
     }
 }
