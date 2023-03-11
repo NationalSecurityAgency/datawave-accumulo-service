@@ -51,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -368,7 +369,7 @@ public class AdminServiceTest {
      */
     @Test
     public void testUnknownAccumuloUser() {
-        Assertions.assertThrows(HttpServerErrorException.class, () -> {
+        assertThrows(HttpServerErrorException.class, () -> {
             grantSystemPermission(defaultUserDetails, "thisuserdoesnotexist", SystemPermissionType.CREATE_TABLE.name());
         });
     }

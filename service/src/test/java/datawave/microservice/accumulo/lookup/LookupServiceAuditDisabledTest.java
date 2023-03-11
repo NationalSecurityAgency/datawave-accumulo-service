@@ -37,6 +37,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -194,7 +195,7 @@ public class LookupServiceAuditDisabledTest {
             LookupService.Parameter.CF + "=cf2",
             LookupService.Parameter.BEGIN_ENTRY + "=7",
             LookupService.Parameter.END_ENTRY + "=5");
-        Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
+        assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
                     doLookup(defaultUserDetails, path(testTableName + "/row2"), queryString);
                 });
         //@formatter:on
@@ -246,7 +247,7 @@ public class LookupServiceAuditDisabledTest {
         DatawaveUserDetails userDetails = TestHelper.userDetails(Arrays.asList("ThisRoleIsNoGood", "IAmRoot"),
                         Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I"));
         String queryString = String.join("&", "useAuthorizations=A,C,E,G,I", "columnVisibility=foo");
-        Assertions.assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+        assertThrows(HttpClientErrorException.Forbidden.class, () -> {
             doLookup(userDetails, path(testTableName + "/row1"), queryString);
         });
     }
@@ -255,7 +256,7 @@ public class LookupServiceAuditDisabledTest {
     public void testErrorOnUserWithInsufficientAuths() throws Exception {
         DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "C"));
         String queryString = String.join("&", "useAuthorizations=A,C,E,G,I", "columnVisibility=foo");
-        Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
+        assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
             doLookup(userDetails, path(testTableName + "/row2"), queryString);
         });
     }
@@ -264,7 +265,7 @@ public class LookupServiceAuditDisabledTest {
     public void testErrorOnTableDoesNotExist() throws Exception {
         DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A", "B", "C"));
         String queryString = String.join("&", "useAuthorizations=A,B,C", "columnVisibility=foo");
-        Assertions.assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
+        assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
             doLookup(userDetails, BASE_PATH + "/THIS_TABLE_DOES_NOT_EXIST/row2", queryString);
         });
     }

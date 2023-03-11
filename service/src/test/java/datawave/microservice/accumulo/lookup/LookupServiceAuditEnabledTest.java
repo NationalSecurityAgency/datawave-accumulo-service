@@ -38,6 +38,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
@@ -141,7 +142,7 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule1");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class, () -> {
+        Throwable thrown = assertThrows(AssertionError.class, () -> {
             testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule1", "row3", Auditor.AuditType.ACTIVE);
         });
         assertTrue(thrown.getMessage().contains("0 request(s) executed"));
@@ -156,7 +157,7 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule2");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class,
+        Throwable thrown = assertThrows(AssertionError.class,
                         () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule2", "row3", Auditor.AuditType.PASSIVE));
         assertTrue(thrown.getMessage().contains("0 request(s) executed"));
     }
@@ -170,7 +171,7 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule3");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class,
+        Throwable thrown = assertThrows(AssertionError.class,
                         () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule3", "row3", Auditor.AuditType.NONE));
         assertTrue(thrown.getMessage().contains("0 request(s) executed"));
         
@@ -185,7 +186,7 @@ public class LookupServiceAuditEnabledTest {
         // All mockAuditServer expectation(s) must fail
         mockDataService.setupMockTable(connector, "tableWithNoAuditRule4");
         mockAuditServer.expect(anything());
-        Throwable thrown = Assertions.assertThrows(AssertionError.class,
+        Throwable thrown = assertThrows(AssertionError.class,
                         () -> testLookupAndVerifyAuditUriWithSuccess("tableWithNoAuditRule4", "row3", Auditor.AuditType.LOCALONLY));
         assertTrue(thrown.getMessage().contains("0 request(s) executed"));
     }
@@ -194,7 +195,7 @@ public class LookupServiceAuditEnabledTest {
     public void testErrorOnMissingColVizParam() throws Exception {
         // expectedException.expect(new TestHelper.StatusMatcher(400));
         DatawaveUserDetails userDetails = TestHelper.userDetails(Collections.singleton("Administrator"), Arrays.asList("A"));
-        Throwable thrown = Assertions.assertThrows(HttpClientErrorException.class, () -> {
+        Throwable thrown = assertThrows(HttpClientErrorException.class, () -> {
             doLookup(userDetails, path(testTableName + "/row2"), "NotColumnVisibility=foo");
         });
     }
