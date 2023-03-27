@@ -48,24 +48,3 @@ jobs:
         cache: 'maven'
     - name: Build and Run Unit Tests
       run: mvn -V -B -e -Ddist clean verify
-
-    # Here's an example of how you'd deploy the image to the github package registry.
-    # We don't want to do this by default since packages on github cannot be deleted
-    # or overwritten. So this could only be done for tags, however it seems the quickstart
-    # image may also exceed the maximum size allowed by github.
-    # - name: Image
-    #   env:
-    #     IMAGE_REGISTRY: "docker.pkg.github.com"
-    #     IMAGE_USERNAME: "NationalSecurityAgency"
-    #   run: |
-    #     # Set up env vars
-    #     IMAGE_NAME=$(mvn -q -N -Pdocker -f service/pom.xml -Dexec.executable='echo' -Dexec.args='${project.version}' exec:exec)
-    #     IMAGE_PREFIX=$(mvn -q -N -Pdocker -f service/pom.xml -Dexec.executable='echo' -Dexec.args='${docker.image.prefix}' exec:exec)
-    #     IMAGE_TAG=$(mvn -q -N -Pdocker -f service/pom.xml -Dexec.executable='echo' -Dexec.args='${project.artifactId}' exec:exec)
-    #     REMOTE_IMAGE_NAME="${IMAGE_REGISTRY}/${IMAGE_USERNAME}/${IMAGE_PREFIX}${IMAGE_NAME}"
-    #     # Log in to the package registry
-    #     echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${GITHUB_ACTOR} --password-stdin
-    #     # Tag and push the image
-    #     docker tag ${IMAGE_PREFIX}${IMAGE_NAME}:${IMAGE_TAG} ${REMOTE_IMAGE_NAME}:${IMAGE_TAG}
-    #     docker push ${REMOTE_IMAGE_NAME}:${IMAGE_TAG}
-
