@@ -4,8 +4,8 @@ on:
   push:
     paths-ignore: ['*.md', 'CODEOWNERS', 'LICENSE']
     branches:
-    - 'main'
-    - 'release/*'
+      - 'main'
+      - 'release/*'
   pull_request:
     paths-ignore: ['*.md', 'CODEOWNERS', 'LICENSE']
 
@@ -38,13 +38,13 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-    - name: Set up JDK ${{ env.JAVA_VERSION }}
-      uses: actions/setup-java@v3
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        distribution: ${{ env.JAVA_DISTRIBUTION }}
-        cache: 'maven'
-    - name: Build and Run Unit Tests
-      run: mvn -V -B -e -Ddist clean verify
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: 'maven'
+      - name: Build and Run Unit Tests
+        run: mvn -V -B -e -Ddist clean verify
