@@ -66,7 +66,7 @@ public class StatsServiceTest {
     private static final String ZK_MONITOR_PATH = "/accumulo/%s/monitor/http_addr";
     private static final String ZK_MONITOR_DATA = "localhost:9995";
     
-    private static final String EXPECTED_MONITOR_URI = String.format("http://%s/xml", ZK_MONITOR_DATA);
+    private static final String EXPECTED_MONITOR_URI = String.format("http://%s/rest/xml", ZK_MONITOR_DATA);
     
     private static String expectedMonitorResponse;
     

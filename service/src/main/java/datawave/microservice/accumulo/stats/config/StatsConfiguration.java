@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties({JaxbProperties.class})
+@EnableConfigurationProperties({JaxbProperties.class, StatsProperties.class})
 @ConditionalOnProperty(name = "accumulo.stats.enabled", havingValue = "true", matchIfMissing = true)
 public class StatsConfiguration {
     

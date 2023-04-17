@@ -8,6 +8,7 @@ import org.apache.curator.retry.RetryNTimes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -47,7 +48,12 @@ public class AccumuloMonitorLocator {
         try (CuratorFramework curator = CuratorFrameworkFactory.newClient(clientProps.getProperty(INSTANCE_ZOOKEEPERS.getKey()), retryPolicy)) {
             curator.start();
             byte[] bytes = curator.getData().forPath(String.format(MONITOR_HTTP_ADDR, accumuloClient.instanceOperations().getInstanceID()));
-            return new String(bytes, ENCODING);
+            String location = new String(bytes, ENCODING);
+            if (location.startsWith("http://")) {
+                URI uri = new URI(location);
+                location = uri.getHost() + ":" + uri.getPort();
+            }
+            return location;
         } catch (Exception e) {
             LOGGER.error("Cloud not fetch Accumulo monitor URL from zookeeper", e);
             throw new IllegalStateException("Could not fetch Accumulo monitor URL from zookeeper", e);
