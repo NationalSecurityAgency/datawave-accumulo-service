@@ -1,5 +1,7 @@
 package datawave.microservice.accumulo.stats;
 
+import datawave.microservice.accumulo.stats.config.StatsConfiguration.JaxbProperties;
+import datawave.microservice.accumulo.stats.config.StatsProperties;
 import datawave.microservice.accumulo.stats.util.AccumuloMonitorLocator;
 import datawave.webservice.response.StatsResponse;
 import org.apache.accumulo.core.client.AccumuloClient;
@@ -39,7 +41,8 @@ import java.lang.annotation.Annotation;
 @ConditionalOnProperty(name = "accumulo.stats.enabled", havingValue = "true", matchIfMissing = true)
 public class StatsService implements InitializingBean {
     
-    public static final String MONITOR_STATS_URI = "http://%s/xml";
+    @Autowired
+    private StatsProperties statsProperties;
     
     private String monitorStatsUri = null;
     
@@ -72,7 +75,7 @@ public class StatsService implements InitializingBean {
     
     public synchronized void discoverAccumuloMonitor() {
         try {
-            monitorStatsUri = String.format(MONITOR_STATS_URI, new AccumuloMonitorLocator().getHostPort(warehouseClient));
+            monitorStatsUri = String.format(statsProperties.getMonitorStatsUriTemplate(), new AccumuloMonitorLocator().getHostPort(warehouseClient));
         } catch (Exception e) {
             log.error("Failed to discover Accumulo monitor location", e);
         }
