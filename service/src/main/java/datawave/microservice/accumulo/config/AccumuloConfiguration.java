@@ -1,11 +1,5 @@
 package datawave.microservice.accumulo.config;
 
-import datawave.accumulo.util.security.UserAuthFunctions;
-import datawave.marking.MarkingFunctions;
-import datawave.microservice.accumulo.config.AccumuloConfiguration.MetricsClusterProperties;
-import datawave.microservice.accumulo.config.AccumuloConfiguration.WarehouseClusterProperties;
-import datawave.microservice.config.accumulo.AccumuloProperties;
-import datawave.microservice.config.cluster.ClusterProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,6 +7,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+
+import datawave.accumulo.util.security.UserAuthFunctions;
+import datawave.marking.MarkingFunctions;
+import datawave.microservice.accumulo.config.AccumuloConfiguration.MetricsClusterProperties;
+import datawave.microservice.accumulo.config.AccumuloConfiguration.WarehouseClusterProperties;
+import datawave.microservice.config.accumulo.AccumuloProperties;
+import datawave.microservice.config.cluster.ClusterProperties;
 
 @Configuration
 @EnableConfigurationProperties({WarehouseClusterProperties.class, MetricsClusterProperties.class})

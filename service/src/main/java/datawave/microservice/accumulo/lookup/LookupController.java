@@ -1,14 +1,15 @@
 package datawave.microservice.accumulo.lookup;
 
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.webservice.query.exception.QueryException;
-import datawave.webservice.response.LookupResponse;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import static datawave.microservice.accumulo.lookup.LookupService.ALLOWED_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.BEGIN_ENTRY;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CF;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CF_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CQ;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CQ_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.END_ENTRY;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.ROW_ENCODING;
+import static datawave.microservice.accumulo.lookup.LookupService.Parameter.USE_AUTHS;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -21,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static datawave.microservice.accumulo.lookup.LookupService.ALLOWED_ENCODING;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.BEGIN_ENTRY;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CF;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CF_ENCODING;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CQ;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.CQ_ENCODING;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.END_ENTRY;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.ROW_ENCODING;
-import static datawave.microservice.accumulo.lookup.LookupService.Parameter.USE_AUTHS;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.webservice.query.exception.QueryException;
+import datawave.webservice.response.LookupResponse;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * REST controller for Accumulo lookup service

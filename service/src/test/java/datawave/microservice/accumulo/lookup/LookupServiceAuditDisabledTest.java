@@ -1,12 +1,17 @@
 package datawave.microservice.accumulo.lookup;
 
-import datawave.microservice.accumulo.TestHelper;
-import datawave.microservice.accumulo.mock.MockAccumuloConfiguration;
-import datawave.microservice.accumulo.mock.MockAccumuloDataService;
-import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.webservice.response.LookupResponse;
-import datawave.webservice.response.objects.DefaultKey;
+import static datawave.microservice.accumulo.TestHelper.assertHttpException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collections;
+
+import javax.xml.bind.JAXB;
+
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,16 +36,13 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.xml.bind.JAXB;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Collections;
-
-import static datawave.microservice.accumulo.TestHelper.assertHttpException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import datawave.microservice.accumulo.TestHelper;
+import datawave.microservice.accumulo.mock.MockAccumuloConfiguration;
+import datawave.microservice.accumulo.mock.MockAccumuloDataService;
+import datawave.microservice.authorization.jwt.JWTRestTemplate;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.webservice.response.LookupResponse;
+import datawave.webservice.response.objects.DefaultKey;
 
 /**
  * Tests LookupController and LookupService functionality ({@code accumulo.lookup.enabled=true}) with auditing disabled ({@code audit-client.enabled=false}).

@@ -1,7 +1,5 @@
 package datawave.microservice.accumulo.lookup.config;
 
-import datawave.marking.ColumnVisibilitySecurityMarking;
-import datawave.marking.SecurityMarking;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -10,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.context.annotation.RequestScope;
+
+import datawave.marking.ColumnVisibilitySecurityMarking;
+import datawave.marking.SecurityMarking;
 
 @Lazy
 @Configuration

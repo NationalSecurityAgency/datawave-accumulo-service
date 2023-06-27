@@ -1,7 +1,10 @@
 package datawave.microservice.accumulo.stats.util;
 
-import datawave.accumulo.inmemory.InMemoryAccumuloClient;
-import datawave.accumulo.inmemory.InMemoryInstance;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Properties;
+
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.conf.ClientProperty;
 import org.apache.curator.framework.CuratorFramework;
@@ -13,10 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import datawave.accumulo.inmemory.InMemoryAccumuloClient;
+import datawave.accumulo.inmemory.InMemoryInstance;
 
 public class AccumuloMonitorLocatorTest {
     

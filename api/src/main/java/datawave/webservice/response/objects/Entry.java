@@ -1,11 +1,12 @@
 package datawave.webservice.response.objects;
 
-import datawave.webservice.query.util.TypedValue;
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import java.io.Serializable;
+
+import datawave.webservice.query.util.TypedValue;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Entry implements Serializable {

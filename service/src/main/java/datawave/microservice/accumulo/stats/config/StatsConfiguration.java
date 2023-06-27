@@ -1,10 +1,11 @@
 package datawave.microservice.accumulo.stats.config;
 
-import datawave.microservice.accumulo.stats.config.StatsConfiguration.JaxbProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import datawave.microservice.accumulo.stats.config.StatsConfiguration.JaxbProperties;
 
 @Configuration
 @EnableConfigurationProperties({JaxbProperties.class, StatsProperties.class})

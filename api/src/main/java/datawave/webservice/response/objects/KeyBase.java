@@ -1,12 +1,14 @@
 package datawave.webservice.response.objects;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import datawave.webservice.query.result.event.HasMarkings;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import datawave.webservice.query.result.event.HasMarkings;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 @XmlAccessorType(XmlAccessType.NONE)

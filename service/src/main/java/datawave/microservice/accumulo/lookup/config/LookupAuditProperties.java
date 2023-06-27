@@ -1,13 +1,15 @@
 package datawave.microservice.accumulo.lookup.config;
 
-import datawave.webservice.common.audit.Auditor.AuditType;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.validation.annotation.Validated;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
+
+import datawave.webservice.common.audit.Auditor.AuditType;
 
 @Validated
 @ConfigurationProperties(prefix = "accumulo.lookup.audit")

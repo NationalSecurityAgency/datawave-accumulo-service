@@ -1,12 +1,19 @@
 package datawave.microservice.accumulo.lookup;
 
-import datawave.microservice.accumulo.TestHelper;
-import datawave.microservice.accumulo.mock.MockAccumuloConfiguration;
-import datawave.microservice.accumulo.mock.MockAccumuloDataService;
-import datawave.microservice.audit.AuditClient;
-import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.webservice.common.audit.Auditor;
+import static datawave.microservice.accumulo.TestHelper.assertExceptionMessage;
+import static datawave.microservice.accumulo.TestHelper.assertHttpException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,19 +39,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import static datawave.microservice.accumulo.TestHelper.assertExceptionMessage;
-import static datawave.microservice.accumulo.TestHelper.assertHttpException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import datawave.microservice.accumulo.TestHelper;
+import datawave.microservice.accumulo.mock.MockAccumuloConfiguration;
+import datawave.microservice.accumulo.mock.MockAccumuloDataService;
+import datawave.microservice.audit.AuditClient;
+import datawave.microservice.authorization.jwt.JWTRestTemplate;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.webservice.common.audit.Auditor;
 
 /**
  * Tests both {@link AuditClient} functionality as well as lookup-specific audit functionality ({@code accumulo.lookup.enabled=true} and
