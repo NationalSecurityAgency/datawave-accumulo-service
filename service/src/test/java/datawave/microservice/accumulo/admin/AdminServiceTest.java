@@ -1,23 +1,20 @@
 package datawave.microservice.accumulo.admin;
 
-import datawave.microservice.accumulo.TestHelper;
-import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.webservice.query.util.OptionallyEncodedString;
-import datawave.webservice.request.UpdateRequest;
-import datawave.webservice.request.objects.Mutation;
-import datawave.webservice.request.objects.MutationEntry;
-import datawave.webservice.request.objects.TableUpdate;
-import datawave.webservice.response.ListTablesResponse;
-import datawave.webservice.response.ListUserAuthorizationsResponse;
-import datawave.webservice.response.ListUserPermissionsResponse;
-import datawave.webservice.response.ListUsersResponse;
-import datawave.webservice.response.UpdateResponse;
-import datawave.webservice.response.ValidateVisibilityResponse;
-import datawave.webservice.response.objects.SystemPermission;
-import datawave.webservice.response.objects.SystemPermission.SystemPermissionType;
-import datawave.webservice.response.objects.Visibility;
-import datawave.webservice.result.VoidResponse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.StreamSupport;
+
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.admin.SecurityOperations;
 import org.apache.accumulo.core.client.admin.TableOperations;
@@ -40,20 +37,24 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.StreamSupport;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import datawave.microservice.accumulo.TestHelper;
+import datawave.microservice.authorization.jwt.JWTRestTemplate;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.webservice.query.util.OptionallyEncodedString;
+import datawave.webservice.request.UpdateRequest;
+import datawave.webservice.request.objects.Mutation;
+import datawave.webservice.request.objects.MutationEntry;
+import datawave.webservice.request.objects.TableUpdate;
+import datawave.webservice.response.ListTablesResponse;
+import datawave.webservice.response.ListUserAuthorizationsResponse;
+import datawave.webservice.response.ListUserPermissionsResponse;
+import datawave.webservice.response.ListUsersResponse;
+import datawave.webservice.response.UpdateResponse;
+import datawave.webservice.response.ValidateVisibilityResponse;
+import datawave.webservice.response.objects.SystemPermission;
+import datawave.webservice.response.objects.SystemPermission.SystemPermissionType;
+import datawave.webservice.response.objects.Visibility;
+import datawave.webservice.result.VoidResponse;
 
 /**
  * These tests exercise the endpoints defined by the AdminController, and thus the respective methods of the underlying AdminService delegate are tested as

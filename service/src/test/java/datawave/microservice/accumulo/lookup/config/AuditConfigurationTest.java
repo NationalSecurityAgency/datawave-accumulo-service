@@ -1,10 +1,11 @@
 package datawave.microservice.accumulo.lookup.config;
 
-import datawave.webservice.common.audit.Auditor;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
+import datawave.webservice.common.audit.Auditor;
 
 public class AuditConfigurationTest {
     

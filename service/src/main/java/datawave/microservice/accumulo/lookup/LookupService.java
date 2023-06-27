@@ -1,23 +1,7 @@
 package datawave.microservice.accumulo.lookup;
 
-import com.google.common.base.Preconditions;
-import datawave.accumulo.util.security.UserAuthFunctions;
-import datawave.marking.MarkingFunctions;
-import datawave.marking.SecurityMarking;
-import datawave.microservice.accumulo.lookup.config.LookupAuditProperties;
-import datawave.microservice.accumulo.lookup.config.LookupProperties;
-import datawave.microservice.accumulo.lookup.config.ResponseObjectFactory;
-import datawave.microservice.audit.AuditClient;
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.security.util.ScannerHelper;
-import datawave.webservice.common.audit.AuditParameters;
-import datawave.webservice.query.exception.BadRequestQueryException;
-import datawave.webservice.query.exception.DatawaveErrorCode;
-import datawave.webservice.query.exception.NotFoundQueryException;
-import datawave.webservice.query.exception.QueryException;
-import datawave.webservice.response.LookupResponse;
-import datawave.webservice.response.objects.Entry;
-import datawave.webservice.response.objects.KeyBase;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.BatchScanner;
 import org.apache.accumulo.core.client.TableNotFoundException;
@@ -47,7 +32,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import com.google.common.base.Preconditions;
+
+import datawave.accumulo.util.security.UserAuthFunctions;
+import datawave.marking.MarkingFunctions;
+import datawave.marking.SecurityMarking;
+import datawave.microservice.accumulo.lookup.config.LookupAuditProperties;
+import datawave.microservice.accumulo.lookup.config.LookupProperties;
+import datawave.microservice.accumulo.lookup.config.ResponseObjectFactory;
+import datawave.microservice.audit.AuditClient;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.security.util.ScannerHelper;
+import datawave.webservice.common.audit.AuditParameters;
+import datawave.webservice.query.exception.BadRequestQueryException;
+import datawave.webservice.query.exception.DatawaveErrorCode;
+import datawave.webservice.query.exception.NotFoundQueryException;
+import datawave.webservice.query.exception.QueryException;
+import datawave.webservice.response.LookupResponse;
+import datawave.webservice.response.objects.Entry;
+import datawave.webservice.response.objects.KeyBase;
 
 /**
  * Provides Accumulo scan results in the form of {@link LookupResponse} for the given inputs (table, row, cf, cq, etc). Optionally supports auditing of lookup

@@ -1,8 +1,7 @@
 package datawave.microservice.accumulo.mock;
 
-import com.google.common.base.Preconditions;
-import datawave.microservice.accumulo.lookup.LookupService;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
@@ -15,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Preconditions;
+
+import datawave.microservice.accumulo.lookup.LookupService;
 
 /**
  * When the <strong>mock</strong> profile is activated, this bean will automatically ingest a tiny amount of data into an in-memory accumulo instance. The

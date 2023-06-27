@@ -1,9 +1,6 @@
 package datawave.webservice.response;
 
-import datawave.webservice.response.objects.Server;
-import datawave.webservice.response.objects.Table;
-import datawave.webservice.response.objects.Totals;
-import datawave.webservice.result.BaseResponse;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,7 +9,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+
+import datawave.webservice.response.objects.Server;
+import datawave.webservice.response.objects.Table;
+import datawave.webservice.response.objects.Totals;
+import datawave.webservice.result.BaseResponse;
 
 @XmlRootElement(name = "stats")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -1,5 +1,12 @@
 package datawave.microservice.accumulo.stats.util;
 
+import static org.apache.accumulo.core.conf.ClientProperty.INSTANCE_ZOOKEEPERS;
+
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -7,13 +14,6 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-
-import static org.apache.accumulo.core.conf.ClientProperty.INSTANCE_ZOOKEEPERS;
 
 /**
  * Utility to fetch the location (host:port) of the Accumulo monitor application.

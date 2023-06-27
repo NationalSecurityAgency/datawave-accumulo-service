@@ -1,14 +1,14 @@
 package datawave.webservice.response;
 
-import datawave.webservice.response.objects.UserPermissions;
-import datawave.webservice.result.BaseResponse;
-
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import datawave.webservice.response.objects.UserPermissions;
+import datawave.webservice.result.BaseResponse;
 
 @XmlRootElement(name = "ListUserPermissionsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
