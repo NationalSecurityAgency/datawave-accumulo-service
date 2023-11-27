@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 
 import javax.xml.bind.JAXB;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -161,14 +161,14 @@ public class LookupServiceAuditDisabledTest {
         String queryString = String.join("&",
             "useAuthorizations=B",
             "columnVisibility=foo",
-            LookupService.Parameter.CF + "=" + Base64.encodeBase64URLSafeString("cf2".getBytes()),
+            LookupService.Parameter.CF + "=" + Base64.getUrlEncoder().encodeToString("cf2".getBytes()),
             LookupService.Parameter.CF_ENCODING + "=base64",
-            LookupService.Parameter.CQ + "=" + Base64.encodeBase64URLSafeString("cq2".getBytes()),
+            LookupService.Parameter.CQ + "=" + Base64.getUrlEncoder().encodeToString("cq2".getBytes()),
             LookupService.Parameter.CQ_ENCODING + "=base64",
             LookupService.Parameter.ROW_ENCODING + "=base64");
         //@formatter:on
         
-        String rowidBase64 = Base64.encodeBase64URLSafeString("row3".getBytes());
+        String rowidBase64 = Base64.getUrlEncoder().encodeToString("row3".getBytes());
         LookupResponse response = doLookup(defaultUserDetails, path(testTableName + "/" + rowidBase64), queryString);
         assertEquals(1, response.getEntries().size(), "Lookup should have matched 1 entry");
     }
