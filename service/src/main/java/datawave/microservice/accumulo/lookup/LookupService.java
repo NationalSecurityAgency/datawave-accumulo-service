@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +20,6 @@ import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.core.security.ColumnVisibility;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.hadoop.io.Text;
@@ -426,7 +426,7 @@ public class LookupService {
     }
     
     static String base64Decode(String value) {
-        return null == value ? null : new String(Base64.decodeBase64(value.getBytes(UTF_8)), UTF_8);
+        return null == value ? null : new String(Base64.getDecoder().decode(value.getBytes(UTF_8)), UTF_8);
     }
     
     public static class LookupRequest {

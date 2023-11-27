@@ -2,14 +2,13 @@ package datawave.webservice.response.objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-
-import org.apache.commons.codec.binary.Base64;
 
 import datawave.marking.MarkingFunctions;
 import datawave.webservice.query.util.TypedValue;
@@ -45,7 +44,7 @@ public class DefaultKey extends KeyBase {
     @Override
     public String getRow() {
         if (this.row.getType().equals(TypedValue.XSD_STRING) && this.row.isBase64Encoded()) {
-            return new String(Base64.decodeBase64(this.row.getValue().toString().getBytes(UTF_8)), UTF_8);
+            return new String(Base64.getDecoder().decode(this.row.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.row.getValue().toString();
         }
@@ -54,7 +53,7 @@ public class DefaultKey extends KeyBase {
     @Override
     public String getColFam() {
         if (this.colFam.getType().equals(TypedValue.XSD_STRING) && this.colFam.isBase64Encoded()) {
-            return new String(Base64.decodeBase64(this.colFam.getValue().toString().getBytes(UTF_8)), UTF_8);
+            return new String(Base64.getDecoder().decode(this.colFam.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.colFam.getValue().toString();
         }
@@ -63,7 +62,7 @@ public class DefaultKey extends KeyBase {
     @Override
     public String getColQual() {
         if (this.colQual.getType().equals(TypedValue.XSD_STRING) && this.colQual.isBase64Encoded()) {
-            return new String(Base64.decodeBase64(this.colQual.getValue().toString().getBytes(UTF_8)), UTF_8);
+            return new String(Base64.getDecoder().decode(this.colQual.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.colQual.getValue().toString();
         }
@@ -71,7 +70,7 @@ public class DefaultKey extends KeyBase {
     
     public String getColumnVisibility() {
         if (this.columnVisibility.getType().equals(TypedValue.XSD_STRING) && this.columnVisibility.isBase64Encoded()) {
-            return new String(Base64.decodeBase64(this.columnVisibility.getValue().toString().getBytes(UTF_8)), UTF_8);
+            return new String(Base64.getDecoder().decode(this.columnVisibility.getValue().toString().getBytes(UTF_8)), UTF_8);
         } else {
             return this.columnVisibility.getValue().toString();
         }
