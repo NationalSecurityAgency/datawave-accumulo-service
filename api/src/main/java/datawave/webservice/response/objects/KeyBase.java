@@ -6,11 +6,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import datawave.webservice.query.result.event.HasMarkings;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlSeeAlso(DefaultKey.class)
 public abstract class KeyBase implements HasMarkings {
