@@ -26,7 +26,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import datawave.microservice.accumulo.stats.config.StatsConfiguration.JaxbProperties;
 import datawave.microservice.accumulo.stats.config.StatsProperties;
 import datawave.microservice.accumulo.stats.util.AccumuloMonitorLocator;
 import datawave.webservice.response.StatsResponse;

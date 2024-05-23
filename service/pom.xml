@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>4.0.5-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
         <relativePath>../../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>accumulo-service</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>4.0.1-SNAPSHOT</version>
     <description>DATAWAVE Accumulo Microservice</description>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <scm>
@@ -22,9 +22,9 @@
         <version.curator>5.2.0</version.curator>
         <version.curator.test>5.2.0</version.curator.test>
         <version.hadoop>3.3.4</version.hadoop>
-        <version.microservice.accumulo-api>3.0.0</version.microservice.accumulo-api>
-        <version.microservice.starter-datawave>3.0.0</version.microservice.starter-datawave>
-        <version.microservice.starter-datawave-audit>3.0.0</version.microservice.starter-datawave-audit>
+        <version.microservice.accumulo-api>4.0.0</version.microservice.accumulo-api>
+        <version.microservice.starter-datawave>4.0.0</version.microservice.starter-datawave>
+        <version.microservice.starter-datawave-audit>4.0.0</version.microservice.starter-datawave-audit>
         <version.zookeeper>3.8.0</version.zookeeper>
     </properties>
     <dependencyManagement>
