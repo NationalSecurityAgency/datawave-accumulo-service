@@ -20,8 +20,8 @@
         <datawave.webservice.namespace>http://webservice.datawave.nsa/v1</datawave.webservice.namespace>
         <version.accumulo>2.1.1</version.accumulo>
         <version.base-rest-responses>4.0.1-SNAPSHOT</version.base-rest-responses>
-        <version.microservice.accumulo-utils>4.0.1-SNAPSHOT</version.microservice.accumulo-utils>
-        <version.microservice.type-utils>3.0.1-SNAPSHOT</version.microservice.type-utils>
+        <version.microservice.accumulo-utils>4.0.2-SNAPSHOT</version.microservice.accumulo-utils>
+        <version.microservice.type-utils>3.0.2-SNAPSHOT</version.microservice.type-utils>
     </properties>
     <dependencyManagement>
         <dependencies>
