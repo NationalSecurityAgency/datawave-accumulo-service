@@ -19,12 +19,12 @@
     </scm>
     <properties>
         <start-class>datawave.microservice.accumulo.AccumuloService</start-class>
+        <version.accumulo-api>4.0.0</version.accumulo-api>
         <version.curator>5.2.0</version.curator>
         <version.curator.test>5.2.0</version.curator.test>
         <version.hadoop>3.3.4</version.hadoop>
-        <version.microservice.accumulo-api>4.0.0</version.microservice.accumulo-api>
-        <version.microservice.starter-datawave>4.0.0</version.microservice.starter-datawave>
-        <version.microservice.starter-datawave-audit>4.0.0</version.microservice.starter-datawave-audit>
+        <version.starter-datawave>4.0.0</version.starter-datawave>
+        <version.starter-datawave-audit>4.0.0</version.starter-datawave-audit>
         <version.zookeeper>3.8.0</version.zookeeper>
     </properties>
     <dependencyManagement>
@@ -32,7 +32,7 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>accumulo-api</artifactId>
-                <version>${version.microservice.accumulo-api}</version>
+                <version>${version.accumulo-api}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>*</artifactId>
@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>spring-boot-starter-datawave-audit</artifactId>
-                <version>${version.microservice.starter-datawave-audit}</version>
+                <version>${version.starter-datawave-audit}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.curator</groupId>
@@ -126,7 +126,7 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>spring-boot-starter-datawave</artifactId>
-                <version>${version.microservice.starter-datawave}</version>
+                <version>${version.starter-datawave}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -167,7 +167,7 @@
         <dependency>
             <groupId>gov.nsa.datawave.microservice</groupId>
             <artifactId>spring-boot-starter-datawave</artifactId>
-            <version>${version.microservice.starter-datawave}</version>
+            <version>${version.starter-datawave}</version>
         </dependency>
         <dependency>
             <groupId>gov.nsa.datawave.microservice</groupId>
