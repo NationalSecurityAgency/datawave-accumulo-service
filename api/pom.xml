@@ -19,16 +19,16 @@
     <properties>
         <datawave.webservice.namespace>http://webservice.datawave.nsa/v1</datawave.webservice.namespace>
         <version.accumulo>2.1.1</version.accumulo>
-        <version.accumulo-utils>4.0.0</version.accumulo-utils>
         <version.base-rest-responses>4.0.0</version.base-rest-responses>
-        <version.type-utils>3.0.0</version.type-utils>
+        <version.datawave.accumulo-utils>4.0.0</version.datawave.accumulo-utils>
+        <version.datawave.type-utils>3.0.0</version.datawave.type-utils>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>accumulo-utils</artifactId>
-                <version>${version.accumulo-utils}</version>
+                <version>${version.datawave.accumulo-utils}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>guava</artifactId>
@@ -44,7 +44,7 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>type-utils</artifactId>
-                <version>${version.type-utils}</version>
+                <version>${version.datawave.type-utils}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>avro</artifactId>
