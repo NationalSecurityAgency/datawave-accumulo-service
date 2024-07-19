@@ -23,7 +23,7 @@ public class AccumuloConfiguration {
     @Lazy
     @Qualifier("warehouse")
     @ConditionalOnMissingBean
-    public AccumuloProperties warehouseAccumuloProperies(WarehouseClusterProperties warehouseProperties) {
+    public AccumuloProperties warehouseAccumuloProperties(WarehouseClusterProperties warehouseProperties) {
         return warehouseProperties.getAccumulo();
     }
     
@@ -31,7 +31,7 @@ public class AccumuloConfiguration {
     @Lazy
     @Qualifier("metrics")
     @ConditionalOnMissingBean
-    public AccumuloProperties metricsAccumuloProperies(MetricsClusterProperties metricsProperties) {
+    public AccumuloProperties metricsAccumuloProperties(MetricsClusterProperties metricsProperties) {
         return metricsProperties.getAccumulo();
     }
     
