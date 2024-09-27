@@ -47,7 +47,7 @@ public class AccumuloMonitorLocator {
         Properties clientProps = accumuloClient.properties();
         try (CuratorFramework curator = CuratorFrameworkFactory.newClient(clientProps.getProperty(INSTANCE_ZOOKEEPERS.getKey()), retryPolicy)) {
             curator.start();
-            byte[] bytes = curator.getData().forPath(String.format(MONITOR_HTTP_ADDR, accumuloClient.instanceOperations().getInstanceID()));
+            byte[] bytes = curator.getData().forPath(String.format(MONITOR_HTTP_ADDR, accumuloClient.instanceOperations().getInstanceId()));
             String location = new String(bytes, ENCODING);
             if (location.startsWith("http://")) {
                 URI uri = new URI(location);

@@ -515,7 +515,7 @@ public class AdminService {
                     AuthorizationFailure failure = new AuthorizationFailure();
                     
                     Optional<Map.Entry<String,String>> tableNameToId = warehouseAccumuloClient.tableOperations().tableIdMap().entrySet().stream()
-                                    .filter(entry -> entry.getValue().equals(next.getKey().getTableId().toString())).findAny();
+                                    .filter(entry -> entry.getValue().equals(next.getKey().getTable().canonical())).findAny();
                     String mappedTableName = (tableNameToId.isPresent() ? tableNameToId.get().getKey() : "unknown");
                     failure.setTableName(new OptionallyEncodedString(mappedTableName));
                     failure.setEndRow(new OptionallyEncodedString(next.getKey().getEndRow().toString()));
