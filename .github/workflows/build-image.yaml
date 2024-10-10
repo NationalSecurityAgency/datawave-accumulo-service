@@ -18,8 +18,8 @@ env:
   IMAGE_NAME: ${{ github.repository.lowercase }}
   JAVA_VERSION: '11'
   JAVA_DISTRIBUTION: 'zulu' #This is the default on v1 of the action for 1.8
-  USER_NAME: ${{ secrets.GHCR_WRITE_USER_NAME }}
-  ACCESS_TOKEN: ${{ secrets.GHCR_WRITE_ACCESS_TOKEN }}
+  USERNAME: ${{ github.actor }}
+  ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build-and-push-datawave-images:
