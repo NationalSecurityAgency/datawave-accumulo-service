@@ -18,7 +18,7 @@ env:
   IMAGE_NAME: ${{ github.repository.lowercase }}
   JAVA_VERSION: '11'
   JAVA_DISTRIBUTION: 'zulu' #This is the default on v1 of the action for 1.8
-  USERNAME: ${{ github.actor }}
+  USER_NAME: ${{ github.actor }}
   ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
