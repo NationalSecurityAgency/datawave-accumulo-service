@@ -1,3 +1,5 @@
+name: Build and Push Image
+
 on:
     push:
       paths-ignore: ['*.md', 'CODEOWNERS', 'LICENSE']
