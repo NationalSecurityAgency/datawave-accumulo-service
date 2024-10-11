@@ -11,4 +11,4 @@ on:
 
 jobs:
   call-reusable-workflow:
-    uses: nationalsecurityagency/datawave/.github/microservice-workflows/maven-tests-reusable.yaml@add-microservice-workflows
+    uses: nationalsecurityagency/datawave/.github/workflows/microservice-maven-tests.yaml@add-microservice-workflows
