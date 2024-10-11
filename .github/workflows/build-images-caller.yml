@@ -1,0 +1,13 @@
+on:
+    push:
+      paths-ignore: ['*.md', 'CODEOWNERS', 'LICENSE']
+      tags:
+        - "**"
+      branches:
+        - 'integration'
+        - 'release/version*'
+        - 'docker-images'
+    workflow_dispatch:
+jobs:
+  call-reusable-workflow:
+    uses: nationalsecurityagency/datawave/.github/microservice-workflows/build-image-reusable.yaml@add-microservice-workflows
