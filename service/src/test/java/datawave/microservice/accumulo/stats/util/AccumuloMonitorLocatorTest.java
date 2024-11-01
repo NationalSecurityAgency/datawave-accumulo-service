@@ -48,7 +48,7 @@ public class AccumuloMonitorLocatorTest {
         try (CuratorFramework curator = CuratorFrameworkFactory.newClient(String.format("localhost:%d", ZK_PORT), new RetryOneTime(500))) {
             curator.start();
             curator.create().creatingParentContainersIfNeeded()
-                            .forPath("/accumulo/" + accumuloClient.instanceOperations().getInstanceID() + "/monitor/http_addr", MONITOR_LOC.getBytes());
+                            .forPath("/accumulo/" + accumuloClient.instanceOperations().getInstanceId() + "/monitor/http_addr", MONITOR_LOC.getBytes());
         }
     }
     

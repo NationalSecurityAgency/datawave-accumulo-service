@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>4.0.0</version>
+        <version>5.0.0</version>
         <relativePath>../../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>accumulo-service</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>4.0.3-SNAPSHOT</version>
     <description>DATAWAVE Accumulo Microservice</description>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <scm>
@@ -22,9 +22,9 @@
         <version.curator>5.2.0</version.curator>
         <version.curator.test>5.2.0</version.curator.test>
         <version.hadoop>3.3.4</version.hadoop>
-        <version.microservice.accumulo-api>3.0.0</version.microservice.accumulo-api>
-        <version.microservice.starter-datawave>3.0.0</version.microservice.starter-datawave>
-        <version.microservice.starter-datawave-audit>3.0.0</version.microservice.starter-datawave-audit>
+        <version.microservice.accumulo-api>4.0.0</version.microservice.accumulo-api>
+        <version.microservice.starter-datawave>4.0.2</version.microservice.starter-datawave>
+        <version.microservice.starter-datawave-audit>4.0.2</version.microservice.starter-datawave-audit>
         <version.zookeeper>3.8.3</version.zookeeper>
     </properties>
     <dependencyManagement>
@@ -224,18 +224,14 @@
     </dependencies>
     <repositories>
         <repository>
-            <!--
-                This repository is a temporary work-around until we can publish artifacts to maven central.
-                This allows us to retrieve released microservice artifacts from our github repository.
-            -->
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>datawave-github-mvn-repo</id>
-            <url>https://raw.githubusercontent.com/NationalSecurityAgency/datawave/mvn-repo</url>
+            <id>github-datawave</id>
+            <url>https://maven.pkg.github.com/NationalSecurityAgency/datawave</url>
         </repository>
     </repositories>
     <build>
