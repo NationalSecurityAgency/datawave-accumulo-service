@@ -193,7 +193,7 @@ public class StatsServiceTest {
                     String.format("localhost:%d", ZK_PORT), new RetryOneTime(500))) {
                 curator.start();
                 curator.create().creatingParentContainersIfNeeded()
-                    .forPath(String.format(ZK_MONITOR_PATH, accumuloClient.instanceOperations().getInstanceID()), ZK_MONITOR_DATA.getBytes());
+                    .forPath(String.format(ZK_MONITOR_PATH, accumuloClient.instanceOperations().getInstanceId()), ZK_MONITOR_DATA.getBytes());
             }
             //@formatter:on
             
