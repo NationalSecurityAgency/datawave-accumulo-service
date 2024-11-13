@@ -22,6 +22,7 @@
         <version.curator>5.2.0</version.curator>
         <version.curator.test>5.2.0</version.curator.test>
         <version.datawave.accumulo-api>4.0.0</version.datawave.accumulo-api>
+        <version.datawave.audit-api>4.0.1</version.datawave.audit-api>
         <version.datawave.starter-datawave>4.0.2</version.datawave.starter-datawave>
         <version.datawave.starter-datawave-audit>4.0.2</version.datawave.starter-datawave-audit>
         <version.hadoop>3.3.4</version.hadoop>
@@ -171,6 +172,11 @@
         <dependency>
             <groupId>gov.nsa.datawave.microservice</groupId>
             <artifactId>accumulo-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>gov.nsa.datawave.microservice</groupId>
+            <artifactId>audit-api</artifactId>
+            <version>${version.datawave.audit-api}</version>
         </dependency>
         <dependency>
             <groupId>gov.nsa.datawave.microservice</groupId>
