@@ -2,7 +2,6 @@ package datawave.microservice.accumulo.mock;
 
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
-import org.apache.accumulo.core.client.Instance;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +20,7 @@ public class MockAccumuloConfiguration {
     
     @Bean
     @Qualifier("warehouse")
-    public Instance warehouseInstance(@Qualifier("warehouse") AccumuloProperties warehouseProperties) {
+    public InMemoryInstance warehouseInstance(@Qualifier("warehouse") AccumuloProperties warehouseProperties) {
         return new InMemoryInstance(warehouseProperties.getInstanceName());
     }
     
