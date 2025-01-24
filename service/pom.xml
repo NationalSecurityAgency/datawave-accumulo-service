@@ -8,7 +8,7 @@
         <relativePath>../../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>accumulo-service</artifactId>
-    <version>4.0.3-SNAPSHOT</version>
+    <version>4.0.3-accumulo4</version>
     <description>DATAWAVE Accumulo Microservice</description>
     <url>https://code.nsa.gov/datawave-accumulo-service</url>
     <scm>
@@ -21,10 +21,11 @@
         <start-class>datawave.microservice.accumulo.AccumuloService</start-class>
         <version.curator>5.2.0</version.curator>
         <version.curator.test>5.2.0</version.curator.test>
-        <version.datawave.accumulo-api>4.0.0</version.datawave.accumulo-api>
+        <version.datawave.accumulo-api>4.0.1-datawave-1</version.datawave.accumulo-api>
         <version.datawave.starter-datawave>4.0.2</version.datawave.starter-datawave>
         <version.datawave.starter-datawave-audit>4.0.2</version.datawave.starter-datawave-audit>
         <version.hadoop>3.3.4</version.hadoop>
+        <version.in-memory-accumulo>5.0.0-datawave-1</version.in-memory-accumulo>
         <version.zookeeper>3.8.3</version.zookeeper>
     </properties>
     <dependencyManagement>
@@ -148,6 +149,7 @@
         <dependency>
             <groupId>gov.nsa.datawave</groupId>
             <artifactId>datawave-in-memory-accumulo</artifactId>
+            <version>${version.in-memory-accumulo}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
