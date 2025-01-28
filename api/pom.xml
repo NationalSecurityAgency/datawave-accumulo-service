@@ -20,7 +20,7 @@
         <datawave.webservice.namespace>http://webservice.datawave.nsa/v1</datawave.webservice.namespace>
         <version.accumulo>4.0.0-datawave-1</version.accumulo>
         <version.datawave.accumulo-utils>5.1.0-accumulo4</version.datawave.accumulo-utils>
-        <version.datawave.base-rest-responses>4.0.0</version.datawave.base-rest-responses>
+        <version.datawave.base-rest-responses>4.0.2-accumulo4-1</version.datawave.base-rest-responses>
         <version.datawave.type-utils>3.0.0</version.datawave.type-utils>
     </properties>
     <dependencyManagement>
