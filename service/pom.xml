@@ -25,7 +25,7 @@
         <version.datawave.starter-datawave>4.0.2</version.datawave.starter-datawave>
         <version.datawave.starter-datawave-audit>4.0.2</version.datawave.starter-datawave-audit>
         <version.hadoop>3.3.4</version.hadoop>
-        <version.zookeeper>3.8.3</version.zookeeper>
+        <version.zookeeper>3.8.4</version.zookeeper>
     </properties>
     <dependencyManagement>
         <dependencies>
